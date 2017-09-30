@@ -1,0 +1,31 @@
+apply plugin: 'java-library'
+
+apply plugin: 'maven'
+
+group = 'com.github.trumeet'
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    // https://mvnrepository.com/artifact/org.codehaus.mojo/animal-sniffer-annotations
+    //compile group: 'org.codehaus.mojo', name: 'animal-sniffer-annotations', version: '1.16'
+// https://mvnrepository.com/artifact/com.google.android/android
+    compileOnly 'com.google.android:android:2.1_r1'
+    // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
+    compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+
+    // Failed on my computer, why??
+    //implementation 'org.json:json:20170516'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
