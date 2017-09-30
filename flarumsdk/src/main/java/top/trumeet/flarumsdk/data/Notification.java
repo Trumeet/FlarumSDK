@@ -9,13 +9,26 @@ public class Notification extends Resource {
 
 	private boolean isRead;
 
+	// TODO: Not work, always 0
 	private int id;
 
 	private String time;
 
 	private String contentType;
 
-	private Object content;
+	// TODO: Not work, always null
+	private Content content;
+
+	// TODO: Not work, always null
+	private String contentHtml;
+
+	public String getContentHtml() {
+		return contentHtml;
+	}
+
+	public void setContentHtml(String contentHtml) {
+		this.contentHtml = contentHtml;
+	}
 
 	public void setIsRead(boolean isRead){
 		this.isRead = isRead;
@@ -49,11 +62,11 @@ public class Notification extends Resource {
 		return contentType;
 	}
 
-	public void setContent(Object content){
+	public void setContent(Content content){
 		this.content = content;
 	}
 
-	public Object getContent(){
+	public Content getContent(){
 		return content;
 	}
 
@@ -62,10 +75,33 @@ public class Notification extends Resource {
 		return 
 			"Attributes{" + 
 			"isRead = '" + isRead + '\'' + 
-			",id = '" + id + '\'' + 
+			",id = '" + id + '\'' +
 			",time = '" + time + '\'' + 
 			",contentType = '" + contentType + '\'' + 
-			",content = '" + content + '\'' + 
+			",content = '" + content + '\'' +
+					",contentHtml = '" + contentHtml + '\'' +
 			"}";
 		}
+
+	public class Content {
+	}
+
+	public class PostMentionedContent extends Content {
+ 		private int replyNumber;
+
+		public int getReplyNumber() {
+			return replyNumber;
+		}
+
+		public void setReplyNumber(int replyNumber) {
+			this.replyNumber = replyNumber;
+		}
+
+		@Override
+		public String toString() {
+			return "PostMentionedContent{" +
+					"replyNumber=" + replyNumber +
+					'}';
+		}
+	}
 }

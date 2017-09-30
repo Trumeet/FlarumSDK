@@ -1,5 +1,6 @@
 package top.trumeet.flarumsdk.internal.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
@@ -23,5 +24,17 @@ public class ObjectParser {
             return null;
         Object object = data.get(0);
         return (T)object;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getAll (List<Resource> data) {
+        if (data == null || data.size() <= 0)
+            return null;
+        List<T> list = new ArrayList<>(data.size());
+        for (Object o
+                 : data) {
+            list.add((T) o);
+        }
+        return list;
     }
 }

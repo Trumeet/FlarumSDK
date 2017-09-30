@@ -12,9 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.List;
+
 import okhttp3.Call;
 import top.trumeet.flarumsdk.data.Forum;
+import top.trumeet.flarumsdk.data.Notification;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.ErrorModel;
+import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 import top.trumeet.flarumsdk.login.LoginRequest;
 import top.trumeet.flarumsdk.login.LoginResponse;
 
@@ -32,6 +36,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         textView = findViewById(android.R.id.text1);
         flarum = Flarum.create(BASE_URL);
+        flarum.setToken(new Flarum.TokenGetter() {
+            @Override
+            public String getToken() {
+                return token;
+            }
+        });
         flarum.getForumInfo(new Callback<Forum>() {
             @Override
             public void onResponse(Call call, Result<Forum> result) {
@@ -50,6 +60,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         menu.add(0, 0, 0, "Login");
+        menu.add(0, 1, 0, "Message Box");
         return true;
     }
 
@@ -59,8 +70,33 @@ public class MainActivity extends Activity {
             case 0 :
                 login();
                 return true;
+            case 1 :
+                notifications();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void notifications () {
+        appendInfo("Getting notifications using token " + token);
+        flarum.getMessageList(new Callback<List<Notification>>() {
+            @Override
+            public void onResponse(Call call, Result<List<Notification>> result) {
+                if (result.object.hasErrors() || result.mainAttr == null) {
+                    appendErrors(result.object);
+                } else {
+                    appendInfo("Notifications: ");
+                    for (Notification notification : result.mainAttr) {
+                        appendInfo(notification.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                appendError(t.toString());
+            }
+        });
     }
 
     private void append (CharSequence charSequence) {
@@ -74,6 +110,15 @@ public class MainActivity extends Activity {
 
     private void appendError (CharSequence charSequence) {
         append(Html.fromHtml("<font color=\'red\'>" + charSequence + "</font>"));
+    }
+
+    private void appendErrors (JSONApiObject object) {
+        appendError("Fail!");
+        if (object.getErrors() != null) {
+            for (ErrorModel errorModel : object.getErrors()) {
+                appendError(errorModel.getStatus());
+            }
+        }
     }
 
     private void login () {
@@ -99,12 +144,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onResponse(Call call, Result<LoginResponse> result) {
                                 if (result.mainAttr == null) {
-                                    appendError("Fail!");
-                                    if (result.object.getErrors() != null) {
-                                        for (ErrorModel errorModel : result.object.getErrors()) {
-                                            appendError(errorModel.getStatus());
-                                        }
-                                    }
+                                    appendErrors(result.object);
                                     return;
                                 }
                                 appendInfo("Success! Token is " + result.mainAttr.getToken() + ", uid is " + result.mainAttr.getUserId());

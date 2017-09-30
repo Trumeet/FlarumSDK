@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,7 @@ import top.trumeet.flarumsdk.data.User;
 import top.trumeet.flarumsdk.internal.parser.OkHttpUtils;
 import top.trumeet.flarumsdk.internal.parser.converter.ForumConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.LoginResponseConverter;
+import top.trumeet.flarumsdk.internal.parser.converter.NotificationConverter;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.JSONApiConverter;
 import top.trumeet.flarumsdk.internal.platform.Platform;
 import top.trumeet.flarumsdk.login.LoginRequest;
@@ -122,6 +124,16 @@ public class Flarum {
                 new ForumConverter(), callback);
     }
 
+    public Result<List<Notification>> getMessageList () throws IOException {
+        return OkHttpUtils.execute(apiInterface.notifications(), this,
+                new NotificationConverter());
+    }
+
+    public Call getMessageList (Callback<List<Notification>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.notifications(), this,
+                new NotificationConverter(), callback);
+    }
+
     public Result<LoginResponse> login (LoginRequest request) throws IOException, JSONException {
         Call call = apiInterface.login(request.getIdentification(),
                 request.getPassword());
@@ -177,6 +189,11 @@ public class Flarum {
             return client.newCall(baseBuilder("token", "POST",
                     createJsonBody(object.toString()))
             .build());
+        }
+
+        Call notifications () {
+            return client.newCall(baseBuilder("notifications", "GET",
+                    null).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,

@@ -74,7 +74,7 @@ Result 是所有返回结果的包裹类，它包含如下信息：
 
 # APIs
 
-__咸鱼目前制作了2个 API__
+__咸鱼目前制作了3个 API__
 
 # 获取论坛信息
 
@@ -87,6 +87,12 @@ __咸鱼目前制作了2个 API__
 `login(LoginRequest request)`
 
 返回 `LoginResponse`：登录结果，包含 Token 和 用户 ID。如果登录失败，则为 Null，您可以从 JsonApiObject 获取错误信息。
+
+# 获取消息列表
+
+`getMessageList()`
+
+返回 `List<Notification>`：消息列表
 
 -----
 
