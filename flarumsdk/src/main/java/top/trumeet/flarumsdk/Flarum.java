@@ -1,11 +1,19 @@
 package top.trumeet.flarumsdk;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import top.trumeet.flarumsdk.data.Discussion;
 import top.trumeet.flarumsdk.data.Forum;
 import top.trumeet.flarumsdk.data.Group;
@@ -15,8 +23,11 @@ import top.trumeet.flarumsdk.data.Tag;
 import top.trumeet.flarumsdk.data.User;
 import top.trumeet.flarumsdk.internal.parser.OkHttpUtils;
 import top.trumeet.flarumsdk.internal.parser.converter.ForumConverter;
+import top.trumeet.flarumsdk.internal.parser.converter.LoginResponseConverter;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.JSONApiConverter;
 import top.trumeet.flarumsdk.internal.platform.Platform;
+import top.trumeet.flarumsdk.login.LoginRequest;
+import top.trumeet.flarumsdk.login.LoginResponse;
 
 public class Flarum {
     private Flarum (String baseUrl, API apiInterface) {
@@ -61,6 +72,28 @@ public class Flarum {
         return flarum;
     }
 
+    /**
+     * Set auth token, it will override {@link Flarum#setToken(String)}.
+     * @param getter dynamic interface
+     */
+    public void setToken (TokenGetter getter) {
+        apiInterface.setTokenGetter(getter);
+    }
+
+    /**
+     * Set auth token string, it will override {@link Flarum#setToken(TokenGetter)}
+     * @param token token string
+     */
+    public void setToken (@Nullable final String token) {
+        apiInterface.setTokenGetter(new TokenGetter() {
+            @Nullable
+            @Override
+            public String getToken() {
+                return token;
+            }
+        });
+    }
+
     private final String baseUrl;
     private final API apiInterface;
     private final Executor platformExecutor;
@@ -89,9 +122,43 @@ public class Flarum {
                 new ForumConverter(), callback);
     }
 
+    public Result<LoginResponse> login (LoginRequest request) throws IOException, JSONException {
+        Call call = apiInterface.login(request.getIdentification(),
+                request.getPassword());
+        return OkHttpUtils.execute(call, this, new LoginResponseConverter());
+    }
+
+    public Call login (LoginRequest request, final Callback<LoginResponse> callback) {
+        return OkHttpUtils.enqueue(apiInterface.login(request.getIdentification(), request.getPassword()),
+                this, new LoginResponseConverter(), callback);
+    }
+
+    /**
+     * A dynamic getter for token
+     */
+    public interface TokenGetter {
+        /**
+         * Get current token. SDK will <strong>NOT</strong> save your token after login.
+         * If you pass NULL, we will not pass Authorization header.
+         * @return Token
+         */
+        @Nullable String getToken ();
+    }
+
     private static class API {
+        public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
         private final OkHttpClient client;
         private final String baseUrl;
+        private TokenGetter tokenGetter;
+
+        public TokenGetter getTokenGetter() {
+            return tokenGetter;
+        }
+
+        public void setTokenGetter(TokenGetter tokenGetter) {
+            this.tokenGetter = tokenGetter;
+        }
 
         API(OkHttpClient client, String baseUrl) {
             this.client = client;
@@ -99,9 +166,32 @@ public class Flarum {
         }
 
         Call forumInfo () {
-            return client.newCall(new Request.Builder()
-            .url(baseUrl + "forum")
+            return client.newCall(baseBuilder("forum", "GET", null)
             .build());
+        }
+
+        Call login (String identification, String password) {
+            JSONObject object = new JSONObject();
+            object.put("identification", identification);
+            object.put("password", password);
+            return client.newCall(baseBuilder("token", "POST",
+                    createJsonBody(object.toString()))
+            .build());
+        }
+
+        private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
+                                             @Nullable RequestBody requestBody) {
+            Request.Builder builder = new Request.Builder()
+                    .url(baseUrl + urlPoint)
+                    .method(method, requestBody);
+            String token = tokenGetter != null ? tokenGetter.getToken() : null;
+            if (token != null)
+                builder.addHeader("Authorization", "Token " + token /* Too bad */);
+            return builder;
+        }
+
+        private static RequestBody createJsonBody (String json) {
+            return RequestBody.create(JSON, json);
         }
     }
 }

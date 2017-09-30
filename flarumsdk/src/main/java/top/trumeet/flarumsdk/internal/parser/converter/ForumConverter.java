@@ -10,7 +10,7 @@ import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 
 public class ForumConverter implements ObjectParser.JsonObjectConverter<Forum> {
     @Override
-    public Forum convert (JSONApiObject object) {
+    public Forum convert (JSONApiObject object, String responseString) {
         return ObjectParser.getFirst(object.getData());
     }
 }

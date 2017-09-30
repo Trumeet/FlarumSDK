@@ -22,12 +22,15 @@ public class OkHttpUtils {
             @Override
             public void onResponse(final Call call, final Response response) {
                 try {
-                    final JSONApiObject object = apiManager.getConverter().fromJson(response.body().string());
+                    String resultStr = response.body().string();
+                    final JSONApiObject object = apiManager.getConverter().fromJson(resultStr);
+                    final Result<T> result = new Result<>(response, converter.convert(object,
+                            resultStr), object);
                     apiManager.getPlatformExecutor()
                             .execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    callback.onResponse(call, new Result<>(response, converter.convert(object), object));
+                                    callback.onResponse(call, result);
                                 }
                             });
                 } catch (IOException e) {
@@ -52,6 +55,6 @@ public class OkHttpUtils {
                                          ObjectParser.JsonObjectConverter<T> converter) throws IOException {
         Response response = original.execute();
         JSONApiObject object = apiManager.getConverter().fromJson(response.body().string());
-        return new Result<>(response, converter.convert(object), object);
+        return new Result<>(response, converter.convert(object, response.body().string()), object);
     }
 }

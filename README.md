@@ -8,20 +8,20 @@ Flarum SDK for Java and Android (Alpha)
 
 * Add it in your root build.gradle at the end of repositories:
 ```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
 
 * 添加依賴
 
 ```
-    dependencies {
-	        compile 'com.github.AndroidSnippet:Animations:[![](https://jitpack.io/v/Trumeet/FlarumSDK.svg)](https://jitpack.io/#Trumeet/FlarumSDK)'
-	}
+dependencies {
+        compile 'com.github.AndroidSnippet:Animations:<版本号>'
+}
 ```
 
 # 使用
@@ -81,6 +81,12 @@ __咸鱼目前制作了一个 API__
 `getForumInfo()`
 
 返回 `Forum`：包含论坛的基本信息。
+
+# 登录
+
+`login(LoginRequest request)`
+
+返回 `LoginResponse`：登录结果，包含 Token 和 用户 ID。如果登录失败，则为 Null，您可以从 JsonApiObject 获取错误信息。
 
 -----
 

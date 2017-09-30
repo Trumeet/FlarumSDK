@@ -1,5 +1,7 @@
 package top.trumeet.flarumsdk.login;
 
+import org.json.JSONObject;
+
 public class LoginResponse {
 
 	private String userId;
@@ -30,4 +32,13 @@ public class LoginResponse {
 			",token = '" + token + '\'' + 
 			"}";
 		}
+
+
+	public static LoginResponse createFromJson (String json) {
+		JSONObject rootObject = new JSONObject(json);
+		LoginResponse response = new LoginResponse();
+		response.setToken(rootObject.getString("token"));
+		response.setUserId(rootObject.getString("userId"));
+		return response;
+	}
 }

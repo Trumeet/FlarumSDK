@@ -14,7 +14,7 @@ public class ObjectParser {
      * Convert {@link JSONApiObject} to T, like RxJava map()
      */
     public interface JsonObjectConverter<T> {
-        T convert (JSONApiObject object);
+        T convert (JSONApiObject object, String responseString);
     }
 
     @SuppressWarnings("unchecked")
