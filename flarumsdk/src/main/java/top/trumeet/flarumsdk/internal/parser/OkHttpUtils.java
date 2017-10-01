@@ -6,6 +6,7 @@ import okhttp3.Call;
 import okhttp3.Response;
 import top.trumeet.flarumsdk.Callback;
 import top.trumeet.flarumsdk.Flarum;
+import top.trumeet.flarumsdk.FlarumException;
 import top.trumeet.flarumsdk.Result;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 
@@ -24,6 +25,11 @@ public class OkHttpUtils {
                 try {
                     String resultStr = response.body().string();
                     final JSONApiObject object = apiManager.getConverter().fromJson(resultStr);
+                    if (object.hasErrors()) {
+                        // Handle error
+                        callOnFailure(call, FlarumException.create(object.getErrors()));
+                        return;
+                    }
                     final Result<T> result = new Result<>(response, converter.convert(object,
                             resultStr), object);
                     apiManager.getPlatformExecutor()
@@ -40,6 +46,10 @@ public class OkHttpUtils {
 
             @Override
             public void onFailure(final Call call, final IOException t) {
+                callOnFailure(call, t);
+            }
+
+            private void callOnFailure (final Call call, final Throwable t) {
                 apiManager.getPlatformExecutor().execute(new Runnable() {
                     @Override
                     public void run() {

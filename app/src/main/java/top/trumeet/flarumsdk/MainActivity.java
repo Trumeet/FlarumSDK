@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         flarum.getMessageList(new Callback<List<Notification>>() {
             @Override
             public void onResponse(Call call, Result<List<Notification>> result) {
-                if (result.object.hasErrors() || result.mainAttr == null) {
+                if (result.mainAttr == null) {
                     appendErrors(result.object);
                 } else {
                     appendInfo("Notifications: ");
