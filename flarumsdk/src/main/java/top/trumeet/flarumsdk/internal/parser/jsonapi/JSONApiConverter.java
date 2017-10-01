@@ -162,7 +162,10 @@ public class JSONApiConverter {
                     JSONObject eachRow = errorList.getJSONObject(i);
 
                     if (!eachRow.isNull("code"))
-                        error.setStatus(eachRow.getString("code"));
+                        error.setCode(eachRow.getString("code"));
+
+                    if (!eachRow.isNull("status"))
+                        error.setStatus(eachRow.getString("status"));
 
                     if (!eachRow.isNull("detail"))
                         error.setDetail(eachRow.getString("detail"));

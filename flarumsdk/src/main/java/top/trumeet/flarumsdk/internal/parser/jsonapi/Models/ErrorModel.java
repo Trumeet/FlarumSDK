@@ -10,6 +10,15 @@ public class ErrorModel {
     private String title;
     private String detail;
     private ErrorSource source;
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getStatus() {
         return status;

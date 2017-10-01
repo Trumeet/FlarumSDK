@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
         appendError("Fail!");
         if (object.getErrors() != null) {
             for (ErrorModel errorModel : object.getErrors()) {
-                appendError(errorModel.getStatus());
+                appendError(errorModel.getStatus() + ", " + errorModel.getCode());
             }
         }
     }
