@@ -51,4 +51,15 @@ public class ErrorModel {
     public void setSource(ErrorSource source) {
         this.source = source;
     }
+
+    @Override
+    public String toString() {
+        return "ErrorModel{" +
+                "status='" + status + '\'' +
+                ", title='" + title + '\'' +
+                ", detail='" + detail + '\'' +
+                ", source=" + source +
+                ", code='" + code + '\'' +
+                '}';
+    }
 }

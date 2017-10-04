@@ -179,7 +179,10 @@ TODO
 
 ## 删除用户
 
-TODO
+`deleteUser(int uid)`
+
+参数：`uid`：用户 UID。也就是返回的 ID。（TODO：在 Result 里面添加 ID）
+返回：无（同步返回 `void`，异步 Callback 返回 `null`）
 
 ## 上传头像
 

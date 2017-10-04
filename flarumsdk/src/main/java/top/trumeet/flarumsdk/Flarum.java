@@ -195,6 +195,16 @@ public class Flarum {
         this, new ItemConverter<User>(), callback);
     }
 
+    public void deleteUser (int uid) throws FlarumException {
+        OkHttpUtils.execute(apiInterface.deleteUser(uid), this,
+                null);
+    }
+
+    public Call deleteUser (int uid, Callback callback) {
+        return OkHttpUtils.enqueue(apiInterface.deleteUser(uid),
+                this, null, callback);
+    }
+
     /**
      * A dynamic getter for token
      */
@@ -279,6 +289,11 @@ public class Flarum {
             return client.newCall(baseBuilder("users", "POST",
                     createJsonBody(createRequestJson(jsonObject).toString())
                     , null, 0).build());
+        }
+
+        Call deleteUser (int uid) {
+            return client.newCall(baseBuilder("users/" + uid, "DELETE",
+                    createStringBody(""), null, 0).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,

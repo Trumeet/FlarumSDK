@@ -24,6 +24,17 @@ public class OkHttpUtils {
             public void onResponse(final Call call, final Response response) {
                 try {
                     String resultStr = response.body().string();
+                    if (resultStr == null || resultStr.trim().equalsIgnoreCase("") &&
+                            converter == null) {
+                        apiManager.getPlatformExecutor()
+                                .execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onResponse(call, null);
+                                    }
+                                });
+                        return;
+                    }
                     final JSONApiObject object = apiManager.getConverter().fromJson(resultStr);
                     if (object.hasErrors()) {
                         // Handle error
@@ -66,6 +77,10 @@ public class OkHttpUtils {
         try {
             Response response = original.execute();
             String result = response.body().string();
+            if (result == null || result.trim().equalsIgnoreCase("") &&
+                    converter == null) {
+                return null;
+            }
             JSONApiObject object = apiManager.getConverter().fromJson(result);
             if (object.hasErrors()) {
                 throw FlarumException.create(object.getErrors());
