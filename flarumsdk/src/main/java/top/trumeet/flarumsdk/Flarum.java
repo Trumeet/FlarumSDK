@@ -1,35 +1,23 @@
 package top.trumeet.flarumsdk;
 
+import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import okhttp3.Call;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import top.trumeet.flarumsdk.data.Discussion;
-import top.trumeet.flarumsdk.data.Forum;
-import top.trumeet.flarumsdk.data.Group;
-import top.trumeet.flarumsdk.data.Link;
-import top.trumeet.flarumsdk.data.Notification;
-import top.trumeet.flarumsdk.data.Tag;
-import top.trumeet.flarumsdk.data.User;
+import top.trumeet.flarumsdk.data.*;
 import top.trumeet.flarumsdk.internal.parser.OkHttpUtils;
-import top.trumeet.flarumsdk.internal.parser.converter.ForumConverter;
+import top.trumeet.flarumsdk.internal.parser.converter.ItemConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.LoginResponseConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.NotificationConverter;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.JSONApiConverter;
 import top.trumeet.flarumsdk.internal.platform.Platform;
 import top.trumeet.flarumsdk.login.LoginRequest;
 import top.trumeet.flarumsdk.login.LoginResponse;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Executor;
 
 public class Flarum {
     private Flarum (String baseUrl, API apiInterface) {
@@ -116,12 +104,12 @@ public class Flarum {
 
     public Result<Forum> getForumInfo () throws IOException {
         return OkHttpUtils.execute(apiInterface.forumInfo(), this,
-                new ForumConverter());
+                new ItemConverter<Forum>());
     }
 
     public Call getForumInfo (Callback<Forum> callback) {
         return OkHttpUtils.enqueue(apiInterface.forumInfo(), this,
-                new ForumConverter(), callback);
+                new ItemConverter<Forum>(), callback);
     }
 
     public Result<List<Notification>> getMessageList () throws IOException {
@@ -132,6 +120,16 @@ public class Flarum {
     public Call getMessageList (Callback<List<Notification>> callback) {
         return OkHttpUtils.enqueue(apiInterface.notifications(), this,
                 new NotificationConverter(), callback);
+    }
+
+    public Result<Notification> markNotificationAsRead (int id) throws IOException {
+        return OkHttpUtils.execute(apiInterface.markNotificationAsRead(id),
+                this, new ItemConverter<Notification>());
+    }
+
+    public Call markNotificationAsRead (int id, Callback<Notification> callback) {
+        return OkHttpUtils.enqueue(apiInterface.markNotificationAsRead(id),
+                this, new ItemConverter<Notification>(), callback);
     }
 
     public Result<LoginResponse> login (LoginRequest request) throws IOException, JSONException {
@@ -159,6 +157,7 @@ public class Flarum {
 
     private static class API {
         public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        public static final MediaType TEXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
 
         private final OkHttpClient client;
         private final String baseUrl;
@@ -191,6 +190,12 @@ public class Flarum {
             .build());
         }
 
+        Call markNotificationAsRead (int id) {
+            return client.newCall(baseBuilder("notifications/" + id
+                    , "PATCH",
+                    createStringBody("")).build());
+        }
+
         Call notifications () {
             return client.newCall(baseBuilder("notifications", "GET",
                     null).build());
@@ -209,6 +214,10 @@ public class Flarum {
 
         private static RequestBody createJsonBody (String json) {
             return RequestBody.create(JSON, json);
+        }
+
+        private static RequestBody createStringBody (String body) {
+            return RequestBody.create(TEXT_PLAIN, body);
         }
     }
 }
