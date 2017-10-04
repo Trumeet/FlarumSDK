@@ -6,8 +6,8 @@ import org.json.JSONObject;
 import top.trumeet.flarumsdk.data.*;
 import top.trumeet.flarumsdk.internal.parser.OkHttpUtils;
 import top.trumeet.flarumsdk.internal.parser.converter.ItemConverter;
+import top.trumeet.flarumsdk.internal.parser.converter.ListConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.LoginResponseConverter;
-import top.trumeet.flarumsdk.internal.parser.converter.NotificationConverter;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.JSONApiConverter;
 import top.trumeet.flarumsdk.internal.platform.Platform;
 import top.trumeet.flarumsdk.login.LoginRequest;
@@ -114,12 +114,12 @@ public class Flarum {
 
     public Result<List<Notification>> getMessageList () throws IOException {
         return OkHttpUtils.execute(apiInterface.notifications(), this,
-                new NotificationConverter());
+                new ListConverter<Notification>());
     }
 
     public Call getMessageList (Callback<List<Notification>> callback) {
         return OkHttpUtils.enqueue(apiInterface.notifications(), this,
-                new NotificationConverter(), callback);
+                new ListConverter<Notification>(), callback);
     }
 
     public Result<Notification> markNotificationAsRead (int id) throws IOException {
@@ -141,6 +141,16 @@ public class Flarum {
     public Call login (LoginRequest request, final Callback<LoginResponse> callback) {
         return OkHttpUtils.enqueue(apiInterface.login(request.getIdentification(), request.getPassword()),
                 this, new LoginResponseConverter(), callback);
+    }
+
+    public Call getTags (Callback<List<Tag>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.tags(), this,
+                new ListConverter<Tag>(), callback);
+    }
+
+    public Result<List<Tag>> getTags () throws IOException {
+        return OkHttpUtils.execute(apiInterface.tags(), this,
+                new ListConverter<Tag>());
     }
 
     /**
@@ -198,6 +208,11 @@ public class Flarum {
 
         Call notifications () {
             return client.newCall(baseBuilder("notifications", "GET",
+                    null).build());
+        }
+
+        Call tags () {
+            return client.newCall(baseBuilder("tags", "GET",
                     null).build());
         }
 

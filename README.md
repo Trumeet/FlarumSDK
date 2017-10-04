@@ -72,37 +72,169 @@ Result 是所有返回结果的包裹类，它包含如下信息：
 
 -----
 
-# APIs
+# 登录及 Token
 
-__咸鱼目前制作了3个 API__
-
-# 获取论坛信息
-
-`getForumInfo()`
-
-返回 `Forum`：包含论坛的基本信息。
-
-# 登录
+## 登录
 
 `login(LoginRequest request)`
 
 返回 `LoginResponse`：登录结果，包含 Token 和 用户 ID。如果登录失败，则为 Null，您可以从 JsonApiObject 获取错误信息。
 
-# 获取消息列表
-
-`getMessageList()`
-
-返回 `List<Notification>`：消息列表
-
------
-
-# 登录及 Token
+## Token
 
 当您调用 `login()` 登录成功后，返回的结果中将会包含 Token。SDK 不会存储这些信息，您需要手动传递给 SDK。
 
 `setToken(String token)` 设定 Token，以后的请求中都会带上这个 Token。
 
 `setToken(TokenGetter getter)` 动态设定 Token，提供一个 Callback，将会在需要使用 Token 的时候回掉它。
+
+# 论坛
+
+## 获取论坛信息
+
+`getForumInfo()`
+
+返回 `Forum`：包含论坛的基本信息。
+
+## 更新论坛信息
+
+TODO
+
+# 讨论（Discussions）
+
+（注：**Discussions** 是一个帖子）
+
+## 获取讨论列表
+
+TODO
+
+## 创建新讨论
+
+TODO
+
+## 根据 ID 获取讨论
+
+TODO
+
+## 更新讨论
+
+TODO
+
+## 删除讨论
+
+TODO
+
+# 帖子（Post）
+
+（注：**Post** 是 一个帖子的 **回复**）
+
+## 获取帖子列表
+
+TODO
+
+## 创建新帖子
+
+TODO
+
+## 根据 ID 获取帖子
+
+TODO
+
+## 更新帖子
+
+TODO
+
+## 删除帖子
+
+TODO
+
+# 用户
+
+## 获取用户列表
+
+TODO
+
+## 注册用户
+
+TODO
+
+## 根据 ID 或 用户名 查询用户
+
+TODO
+
+## 更新用户
+
+TODO
+
+## 删除用户
+
+TODO
+
+## 上传头像
+
+TODO
+
+## 删除头像
+
+TODO
+
+# 群组
+
+## 获取群组列表
+
+TODO
+
+## 创建新群组
+
+TODO
+
+## 更新群组
+
+TODO
+
+## 删除群组
+
+TODO
+
+# 通知
+
+## 获取消息列表
+
+`getMessageList()`
+
+返回 `List<Notification>`：消息列表
+
+## 将通知设为已阅
+
+`markNotificationAsRead(int id)`
+
+id: 通知 Id，可以从 `getMessageList` 获取。
+
+返回 `Notification`：处理完的通知对象
+
+# 标签
+
+## 获取标签列表
+
+`getTags()`
+
+返回 `List<Tag>`：标签列表
+
+## 添加标签
+
+TODO
+
+## 更新标签
+
+TODO
+
+## 删除标签
+
+TODO
+
+## 排序标签
+
+TODO
 
 -----
 
