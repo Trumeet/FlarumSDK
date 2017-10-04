@@ -235,4 +235,33 @@ public class Forum extends Resource {
 	public void setMinPrimaryTags(String minPrimaryTags) {
 		this.minPrimaryTags = minPrimaryTags;
 	}
+
+	@Override
+	public String toString() {
+		return "Forum{" +
+				"guidelinesUrl='" + guidelinesUrl + '\'' +
+				", headerHtml='" + headerHtml + '\'' +
+				", debug=" + debug +
+				", welcomeTitle='" + welcomeTitle + '\'' +
+				", canViewDiscussions=" + canViewDiscussions +
+				", allowSignUp=" + allowSignUp +
+				", welcomeMessage='" + welcomeMessage + '\'' +
+				", canViewFlags=" + canViewFlags +
+				", description='" + description + '\'' +
+				", themePrimaryColor='" + themePrimaryColor + '\'' +
+				", maxSecondaryTags='" + maxSecondaryTags + '\'' +
+				", title='" + title + '\'' +
+				", defaultRoute='" + defaultRoute + '\'' +
+				", logoUrl='" + logoUrl + '\'' +
+				", minSecondaryTags='" + minSecondaryTags + '\'' +
+				", baseUrl='" + baseUrl + '\'' +
+				", faviconUrl='" + faviconUrl + '\'' +
+				", basePath='" + basePath + '\'' +
+				", apiUrl='" + apiUrl + '\'' +
+				", canStartDiscussion=" + canStartDiscussion +
+				", themeSecondaryColor='" + themeSecondaryColor + '\'' +
+				", maxPrimaryTags='" + maxPrimaryTags + '\'' +
+				", minPrimaryTags='" + minPrimaryTags + '\'' +
+				'}';
+	}
 }
