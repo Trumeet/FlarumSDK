@@ -51,7 +51,7 @@ Call getForumInfo(new Callback<Forum>() {
 ```java
 Flarum.create(String baseUrl);
 ```
-创建 APIManager。`baseUrl` 是 **论坛地址**，我们会根据它访问 API，如 `https://discuss.flarum.org`。
+创建 APIManager。`baseUrl` 是 **论坛地址**，我们会根据它访问 API，如 `discuss.flarum.org`。（不能带有 scheme，如 https://。默认使用 https。TODO）
 
 # Result
 
@@ -69,6 +69,9 @@ Result 是所有返回结果的包裹类，它包含如下信息：
 # Resource
 每一个 Resource 对应一个 `data` 对象。它是所有 Model 的超类。它同时包含 `id`、`type` 等信息。
 您需要将它转换为自己需要的类型。
+
+# 分页
+所有 API 中带有 `page` 参数的方法均可以实现分页。您可以输入0至任意数的页数。如果返回的 data 为空，则说明该页面不存在。
 
 -----
 
@@ -102,7 +105,7 @@ TODO
 
 # 讨论（Discussions）
 
-（注：**Discussions** 是一个帖子）
+**Discussions** 是一个帖子
 
 ## 获取讨论列表
 
@@ -126,7 +129,7 @@ TODO
 
 # 帖子（Post）
 
-（注：**Post** 是 一个帖子的 **回复**）
+**Post** 是 一个帖子的 **回复**
 
 ## 获取帖子列表
 
@@ -152,7 +155,12 @@ TODO
 
 ## 获取用户列表
 
-TODO
+`getUsers()`：获取全部用户
+
+`getUsers(String query)` 根据 **用户名** 或 **gambits** 查询用户
+
+返回：`List<User>`：用户列表
+
 
 ## 注册用户
 
@@ -179,6 +187,8 @@ TODO
 TODO
 
 # 群组
+
+群组：用户组，如：**管理员**、**版主** 等
 
 ## 获取群组列表
 

@@ -62,10 +62,17 @@ public class OkHttpUtils {
     }
 
     public static <T> Result<T> execute (Call original, Flarum apiManager,
-                                         ObjectParser.JsonObjectConverter<T> converter) throws IOException {
-        Response response = original.execute();
-        String result = response.body().string();
-        JSONApiObject object = apiManager.getConverter().fromJson(result);
-        return new Result<>(response, converter.convert(object, result), object);
+                                         ObjectParser.JsonObjectConverter<T> converter) throws FlarumException {
+        try {
+            Response response = original.execute();
+            String result = response.body().string();
+            JSONApiObject object = apiManager.getConverter().fromJson(result);
+            if (object.hasErrors()) {
+                throw FlarumException.create(object.getErrors());
+            }
+            return new Result<>(response, converter.convert(object, result), object);
+        } catch (IOException e) {
+            throw FlarumException.fromIOException(e);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package top.trumeet.flarumsdk;
 
+import android.net.Uri;
 import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +16,11 @@ import top.trumeet.flarumsdk.login.LoginResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class Flarum {
     private Flarum (String baseUrl, API apiInterface) {
         this.baseUrl = baseUrl;
@@ -102,7 +104,7 @@ public class Flarum {
         return baseUrl;
     }
 
-    public Result<Forum> getForumInfo () throws IOException {
+    public Result<Forum> getForumInfo () throws FlarumException {
         return OkHttpUtils.execute(apiInterface.forumInfo(), this,
                 new ItemConverter<Forum>());
     }
@@ -112,17 +114,17 @@ public class Flarum {
                 new ItemConverter<Forum>(), callback);
     }
 
-    public Result<List<Notification>> getMessageList () throws IOException {
-        return OkHttpUtils.execute(apiInterface.notifications(), this,
+    public Result<List<Notification>> getMessageList (int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.notifications(page), this,
                 new ListConverter<Notification>());
     }
 
-    public Call getMessageList (Callback<List<Notification>> callback) {
-        return OkHttpUtils.enqueue(apiInterface.notifications(), this,
+    public Call getMessageList (int page, Callback<List<Notification>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.notifications(page), this,
                 new ListConverter<Notification>(), callback);
     }
 
-    public Result<Notification> markNotificationAsRead (int id) throws IOException {
+    public Result<Notification> markNotificationAsRead (int id) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.markNotificationAsRead(id),
                 this, new ItemConverter<Notification>());
     }
@@ -132,7 +134,7 @@ public class Flarum {
                 this, new ItemConverter<Notification>(), callback);
     }
 
-    public Result<LoginResponse> login (LoginRequest request) throws IOException, JSONException {
+    public Result<LoginResponse> login (LoginRequest request) throws FlarumException, JSONException {
         Call call = apiInterface.login(request.getIdentification(),
                 request.getPassword());
         return OkHttpUtils.execute(call, this, new LoginResponseConverter());
@@ -143,24 +145,44 @@ public class Flarum {
                 this, new LoginResponseConverter(), callback);
     }
 
-    public Call getTags (Callback<List<Tag>> callback) {
-        return OkHttpUtils.enqueue(apiInterface.tags(), this,
+    public Call getTags (int page, Callback<List<Tag>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.tags(page), this,
                 new ListConverter<Tag>(), callback);
     }
 
-    public Result<List<Tag>> getTags () throws IOException {
-        return OkHttpUtils.execute(apiInterface.tags(), this,
+    public Result<List<Tag>> getTags (int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.tags(page), this,
                 new ListConverter<Tag>());
     }
 
-    public Call getGroups (Callback<List<Group>> callback) {
-        return OkHttpUtils.enqueue(apiInterface.groups(), this,
+    public Call getGroups (int page, Callback<List<Group>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.groups(page), this,
                 new ListConverter<Group>(), callback);
     }
 
-    public Result<List<Group>> getGroups () throws IOException {
-        return OkHttpUtils.execute(apiInterface.groups(), this,
+    public Result<List<Group>> getGroups (int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.groups(page), this,
                 new ListConverter<Group>());
+    }
+
+    public Result<List<User>> getUsers (int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.users(page, null), this,
+                new ListConverter<User>());
+    }
+
+    public Call getUsers (int page, Callback<List<User>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.users(page, null), this,
+                new ListConverter<User>(), callback);
+    }
+
+    public Result<List<User>> getUsers (String query, int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.users(page, query), this,
+                new ListConverter<User>());
+    }
+
+    public Call getUsers (String query, int page, Callback<List<User>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.users(page, query), this,
+                new ListConverter<User>(), callback);
     }
 
     /**
@@ -193,11 +215,12 @@ public class Flarum {
 
         API(OkHttpClient client, String baseUrl) {
             this.client = client;
-            this.baseUrl = baseUrl + "/api/";
+            this.baseUrl = baseUrl;
         }
 
         Call forumInfo () {
-            return client.newCall(baseBuilder("forum", "GET", null)
+            return client.newCall(baseBuilder("forum", "GET", null,
+                    null, 0)
             .build());
         }
 
@@ -206,40 +229,74 @@ public class Flarum {
             object.put("identification", identification);
             object.put("password", password);
             return client.newCall(baseBuilder("token", "POST",
-                    createJsonBody(object.toString()))
+                    createJsonBody(object.toString()),
+                    null, 0)
             .build());
         }
 
         Call markNotificationAsRead (int id) {
             return client.newCall(baseBuilder("notifications/" + id
                     , "PATCH",
-                    createStringBody("")).build());
+                    createStringBody(""), null, 0).build());
         }
 
-        Call notifications () {
+        Call notifications (int page) {
             return client.newCall(baseBuilder("notifications", "GET",
-                    null).build());
+                    null, null, page).build());
         }
 
-        Call tags () {
+        Call tags (int page) {
             return client.newCall(baseBuilder("tags", "GET",
-                    null).build());
+                    null, null, page).build());
         }
 
-        Call groups () {
+        Call groups (int page) {
             return client.newCall(baseBuilder("groups", "GET",
-                    null).build());
+                    null, null, page).build());
+        }
+
+        Call users (int page, String query) {
+            return client.newCall(baseBuilder("users", "GET",
+                    null, query != null ? new Query("q", query) :
+                    null, page).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
-                                             @Nullable RequestBody requestBody) {
+                                             @Nullable RequestBody requestBody,
+                                             @Nullable Query filter,
+                                             int page) {
+
+            Uri.Builder uriBuilder = new Uri.Builder()
+                    .scheme("https" /* TODO */)
+                    .authority(baseUrl)
+                    .appendPath("api")
+                    .appendPath(urlPoint);
+            if (filter != null) {
+                uriBuilder.appendQueryParameter("filter[" + filter.key + "]" /* very bad */,
+                        filter.value);
+            }
+            if (page > 0) {
+                uriBuilder.appendQueryParameter("page%5Boffset%5D" /* too bad */,
+                        String.valueOf(page * 20));
+            }
+            String url = URLDecoder.decode(uriBuilder.build().toString());
             Request.Builder builder = new Request.Builder()
-                    .url(baseUrl + urlPoint)
+                    .url(url)
                     .method(method, requestBody);
             String token = tokenGetter != null ? tokenGetter.getToken() : null;
             if (token != null)
                 builder.addHeader("Authorization", "Token " + token /* Too bad */);
             return builder;
+        }
+
+        private static class Query {
+            public final String key;
+            public final String value;
+
+            public Query(String key, String value) {
+                this.key = key;
+                this.value = value;
+            }
         }
 
         private static RequestBody createJsonBody (String json) {

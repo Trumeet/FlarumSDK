@@ -1,8 +1,9 @@
 package top.trumeet.flarumsdk;
 
-import java.util.List;
-
 import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.ErrorModel;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Trumeet on 2017/10/1.
@@ -38,6 +39,12 @@ public class FlarumException extends Exception {
     public static FlarumException create (ErrorModel errorModel) {
         return new FlarumException(Integer.parseInt(errorModel.getStatus()),
                 errorModel.getCode());
+    }
+
+    public static FlarumException fromIOException (IOException e) {
+        FlarumException exception = new FlarumException(e);
+        exception.setStatus(-1);
+        return exception;
     }
 
     public static FlarumException create (List<ErrorModel> errorModels) {
