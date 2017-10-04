@@ -4,15 +4,15 @@ import org.json.JSONObject;
 
 public class LoginResponse {
 
-	private String userId;
+	private int userId;
 
 	private String token;
 
-	public void setUserId(String userId){
+	public void setUserId(int userId){
 		this.userId = userId;
 	}
 
-	public String getUserId(){
+	public int getUserId(){
 		return userId;
 	}
 
@@ -38,7 +38,7 @@ public class LoginResponse {
 		JSONObject rootObject = new JSONObject(json);
 		LoginResponse response = new LoginResponse();
 		response.setToken(rootObject.getString("token"));
-		response.setUserId(rootObject.getString("userId"));
+		response.setUserId(rootObject.getInt("userId"));
 		return response;
 	}
 }
