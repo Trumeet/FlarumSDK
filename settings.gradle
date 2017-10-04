@@ -1,1 +1,1 @@
-include ':app', ':flarumsdk'
+include ':flarumsdk'
