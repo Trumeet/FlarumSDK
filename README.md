@@ -164,7 +164,10 @@ TODO
 
 ## 注册用户
 
-TODO
+`registerUser(String username, String password, String email)`
+
+参数：用户名、密码、邮箱
+返回：`User`：注册后的用户对象
 
 ## 根据 ID 或 用户名 查询用户
 

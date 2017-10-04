@@ -185,6 +185,16 @@ public class Flarum {
                 new ListConverter<User>(), callback);
     }
 
+    public Result<User> registerUser (String username, String password, String email) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.registerUser(username, password, email), this,
+                new ItemConverter<User>());
+    }
+
+    public Call registerUser (String username, String password, String email, Callback<User> callback) {
+        return OkHttpUtils.enqueue(apiInterface.registerUser(username, password, email),
+        this, new ItemConverter<User>(), callback);
+    }
+
     /**
      * A dynamic getter for token
      */
@@ -261,6 +271,16 @@ public class Flarum {
                     null, page).build());
         }
 
+        Call registerUser (String username, String password, String email) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", username);
+            jsonObject.put("password", password);
+            jsonObject.put("email", email);
+            return client.newCall(baseBuilder("users", "POST",
+                    createJsonBody(createRequestJson(jsonObject).toString())
+                    , null, 0).build());
+        }
+
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
                                              @Nullable RequestBody requestBody,
                                              @Nullable Query filter,
@@ -305,6 +325,14 @@ public class Flarum {
 
         private static RequestBody createStringBody (String body) {
             return RequestBody.create(TEXT_PLAIN, body);
+        }
+
+        private static JSONObject createRequestJson (JSONObject attributes) {
+            JSONObject object = new JSONObject();
+            JSONObject data = new JSONObject();
+            data.put("attributes", attributes);
+            object.put("data", data);
+            return object;
         }
     }
 }
