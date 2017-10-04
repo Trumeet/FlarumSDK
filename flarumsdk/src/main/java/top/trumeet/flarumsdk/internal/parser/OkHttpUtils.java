@@ -1,7 +1,5 @@
 package top.trumeet.flarumsdk.internal.parser;
 
-import java.io.IOException;
-
 import okhttp3.Call;
 import okhttp3.Response;
 import top.trumeet.flarumsdk.Callback;
@@ -9,6 +7,8 @@ import top.trumeet.flarumsdk.Flarum;
 import top.trumeet.flarumsdk.FlarumException;
 import top.trumeet.flarumsdk.Result;
 import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
+
+import java.io.IOException;
 
 /**
  * Created by Trumeet on 2017/9/26.
@@ -64,7 +64,8 @@ public class OkHttpUtils {
     public static <T> Result<T> execute (Call original, Flarum apiManager,
                                          ObjectParser.JsonObjectConverter<T> converter) throws IOException {
         Response response = original.execute();
-        JSONApiObject object = apiManager.getConverter().fromJson(response.body().string());
-        return new Result<>(response, converter.convert(object, response.body().string()), object);
+        String result = response.body().string();
+        JSONApiObject object = apiManager.getConverter().fromJson(result);
+        return new Result<>(response, converter.convert(object, result), object);
     }
 }
