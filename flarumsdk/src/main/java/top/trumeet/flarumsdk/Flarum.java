@@ -153,6 +153,16 @@ public class Flarum {
                 new ListConverter<Tag>());
     }
 
+    public Call getGroups (Callback<List<Group>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.groups(), this,
+                new ListConverter<Group>(), callback);
+    }
+
+    public Result<List<Group>> getGroups () throws IOException {
+        return OkHttpUtils.execute(apiInterface.groups(), this,
+                new ListConverter<Group>());
+    }
+
     /**
      * A dynamic getter for token
      */
@@ -213,6 +223,11 @@ public class Flarum {
 
         Call tags () {
             return client.newCall(baseBuilder("tags", "GET",
+                    null).build());
+        }
+
+        Call groups () {
+            return client.newCall(baseBuilder("groups", "GET",
                     null).build());
         }
 

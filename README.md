@@ -33,16 +33,16 @@ dependencies {
 Result<Forum> api.getForumInfo() throws IOException {}
 // 异步
 Call getForumInfo(new Callback<Forum>() {
-                 @Override
-                 public void onResponse(Call call, Result<Forum> result) {
-                     // 成功
-                 }
+         @Override
+         public void onResponse(Call call, Result<Forum> result) {
+             // 成功
+         }
 
-                 @Override
-                 public void onFailure(Call call, Throwable e) {
-                     // 出错
-                 }
-             });
+         @Override
+         public void onFailure(Call call, Throwable e) {
+             // 出错
+         }
+     });
 ```
 
 # API Manager
@@ -182,7 +182,9 @@ TODO
 
 ## 获取群组列表
 
-TODO
+`getGroups`
+
+返回：`List<Group>`：群组列表
 
 ## 创建新群组
 
