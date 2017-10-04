@@ -96,6 +96,16 @@ __咸鱼目前制作了3个 API__
 
 -----
 
+# 登录及 Token
+
+当您调用 `login()` 登录成功后，返回的结果中将会包含 Token。SDK 不会存储这些信息，您需要手动传递给 SDK。
+
+`setToken(String token)` 设定 Token，以后的请求中都会带上这个 Token。
+
+`setToken(TokenGetter getter)` 动态设定 Token，提供一个 Callback，将会在需要使用 Token 的时候回掉它。
+
+-----
+
 # Dependencies
 
 * [JSONApi](https://github.com/faogustavo/JSONApi)
