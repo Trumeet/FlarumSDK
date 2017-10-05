@@ -479,6 +479,27 @@ public class Flarum {
     }
 
     /**
+     * Get a discussion by id
+     * @param id Discussion id, {@link Result#id}
+     * @return Discussion result
+     */
+    public Result<Discussion> getDiscussionById (int id) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.getDiscussionById(id), this,
+                new ItemConverter<Discussion>());
+    }
+
+    /**
+     * Get a discussion by id async
+     * @param id Discussion id, {@link Result#id}
+     * @param callback Callback
+     * @return Call
+     */
+    public Call getDiscussionById (int id, Callback<Discussion> callback) {
+        return OkHttpUtils.enqueue(apiInterface.getDiscussionById(id), this,
+                new ItemConverter<Discussion>(), callback);
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
@@ -607,6 +628,11 @@ public class Flarum {
         Call deleteDiscussion (int id) {
             return client.newCall(baseBuilder("discussions/" + id, "DELETE",
                     createStringBody(""), null, 0).build());
+        }
+
+        Call getDiscussionById (int id) {
+            return client.newCall(baseBuilder("discussions/" + id, "GET",
+                    null, null, 0).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
