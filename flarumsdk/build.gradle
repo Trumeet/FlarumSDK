@@ -1,8 +1,8 @@
 apply plugin: 'java-library'
-
 apply plugin: 'maven'
 
 group = 'com.github.trumeet'
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
@@ -29,8 +29,3 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
-
-artifacts {
-    archives sourceJar
-    archives javadocJar
-}
