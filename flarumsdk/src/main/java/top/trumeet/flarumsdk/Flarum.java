@@ -437,6 +437,29 @@ public class Flarum {
     }
 
     /**
+     * Create a new discussion
+     * @param title Discussion title
+     * @param content Discussion content
+     * @return Discussion object
+     */
+    public Result<Discussion> createDiscussion (String title, String content) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.createDiscussion(title, content), this,
+                new ItemConverter<Discussion>());
+    }
+
+    /**
+     * Create a new discussion
+     * @param title Discussion title
+     * @param content Discussion content
+     * @param callback Callback
+     * @return Call
+     */
+    public Call createDiscussion (String title, String content, Callback<Discussion> callback) {
+        return OkHttpUtils.enqueue(apiInterface.createDiscussion(title, content), this,
+                new ItemConverter<Discussion>(), callback);
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
@@ -550,6 +573,15 @@ public class Flarum {
         Call getUserByIdOrName (String query) {
             return client.newCall(baseBuilder("users/" + query
                     , "GET", null, null, 0)
+            .build());
+        }
+
+        Call createDiscussion (String title, String content) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("title", title);
+            jsonObject.put("content", content);
+            return client.newCall(baseBuilder("discussions", "POST",
+                    createJsonBody(createRequestJson(jsonObject).toString()), null, 0)
             .build());
         }
 
