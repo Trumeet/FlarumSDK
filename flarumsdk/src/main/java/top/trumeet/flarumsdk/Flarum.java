@@ -393,6 +393,27 @@ public class Flarum {
     }
 
     /**
+     * Search user by uid or username
+     * @param uidOrName UID or Username
+     * @return User object
+     */
+    public Result<User> searchUserByIdOrName (String uidOrName) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.getUserByIdOrName(uidOrName), this,
+                new ItemConverter<User>());
+    }
+
+    /**
+     * Search user by uid or username
+     * @param uidOrName UID or Username
+     * @param callback Callback
+     * @return Call
+     */
+    public Call searchUserByIdOrName (String uidOrName, Callback<User> callback) {
+        return OkHttpUtils.enqueue(apiInterface.getUserByIdOrName(uidOrName), this,
+                new ItemConverter<User>(), callback);
+    }
+
+    /**
      * Get discussion list, filter by username/gambits
      * @param query filter by username/gambits
      * @param page page
@@ -524,6 +545,12 @@ public class Flarum {
             return client.newCall(baseBuilder("discussions", "GET",
                     null, query != null ? new Query("q", query) :
                             null, id).build());
+        }
+
+        Call getUserByIdOrName (String query) {
+            return client.newCall(baseBuilder("users/" + query
+                    , "GET", null, null, 0)
+            .build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
