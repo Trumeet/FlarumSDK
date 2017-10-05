@@ -460,6 +460,25 @@ public class Flarum {
     }
 
     /**
+     * Delete a discussion
+     * @param id Discussion id, {@link Result#id}
+     */
+    public void deleteDiscussion (int id) throws FlarumException {
+        OkHttpUtils.execute(apiInterface.deleteDiscussion(id), this, null);
+    }
+
+    /**
+     * Delete a discussion async
+     * @param id Discussion id, {@link Result#id}
+     * @param callback Callback
+     * @return Call
+     */
+    public Call deleteDiscussion (int id, Callback callback) {
+        return OkHttpUtils.enqueue(apiInterface.deleteDiscussion(id), this, null,
+                callback);
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
@@ -583,6 +602,11 @@ public class Flarum {
             return client.newCall(baseBuilder("discussions", "POST",
                     createJsonBody(createRequestJson(jsonObject).toString()), null, 0)
             .build());
+        }
+
+        Call deleteDiscussion (int id) {
+            return client.newCall(baseBuilder("discussions/" + id, "DELETE",
+                    createStringBody(""), null, 0).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
