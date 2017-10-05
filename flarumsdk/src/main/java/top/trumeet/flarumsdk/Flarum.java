@@ -2,7 +2,6 @@ package top.trumeet.flarumsdk;
 
 import android.net.Uri;
 import okhttp3.*;
-import org.json.JSONException;
 import org.json.JSONObject;
 import top.trumeet.flarumsdk.data.*;
 import top.trumeet.flarumsdk.internal.parser.OkHttpUtils;
@@ -39,7 +38,7 @@ public class Flarum {
 
     /**
      * Create API client
-     * @param baseUrl Forum base url, e.g: https://discuss.flarum.org
+     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme, TODO
      * @return Flarum API client
      */
     public static Flarum create (String baseUrl) {
@@ -48,7 +47,7 @@ public class Flarum {
 
     /**
      * Create API client with custom {@link OkHttpClient}
-     * @param baseUrl Forum base url, e.g: https://discuss.flarum.org
+     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme, TODO
      * @param okHttpClient Custom http client
      * @return Flarum API client
      */
@@ -92,114 +91,241 @@ public class Flarum {
 
     private JSONApiConverter converter;
 
+    /**
+     * Internal api, get json api converter, you can deserialize json to object use it
+     * @return Json api converter
+     */
     public JSONApiConverter getConverter() {
         return converter;
     }
 
+    /**
+     * Internal api, get platform executor. In android, it will execute on main thread
+     * @return executor
+     */
     public Executor getPlatformExecutor() {
         return platformExecutor;
     }
 
+    /**
+     * Get forum base url
+     * @return base url
+     */
     public String getBaseUrl() {
         return baseUrl;
     }
 
+    /**
+     * get information about the forum, including groups and tags
+     * @return Forum info
+     */
     public Result<Forum> getForumInfo () throws FlarumException {
         return OkHttpUtils.execute(apiInterface.forumInfo(), this,
                 new ItemConverter<Forum>());
     }
 
+    /**
+     * get information about the forum async, including groups and tags
+     * @param callback Callback
+     * @return Call
+     */
     public Call getForumInfo (Callback<Forum> callback) {
         return OkHttpUtils.enqueue(apiInterface.forumInfo(), this,
                 new ItemConverter<Forum>(), callback);
     }
 
+    /**
+     * get all notifications
+     * @param page page
+     * @return notifications list
+     */
     public Result<List<Notification>> getMessageList (int page) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.notifications(page), this,
                 new ListConverter<Notification>());
     }
 
+    /**
+     * get all notifications async
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
     public Call getMessageList (int page, Callback<List<Notification>> callback) {
         return OkHttpUtils.enqueue(apiInterface.notifications(page), this,
                 new ListConverter<Notification>(), callback);
     }
 
+    /**
+     * mark a notification as read
+     * @param id Notification id, {@link Result#id}
+     * @return notification object
+     */
     public Result<Notification> markNotificationAsRead (int id) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.markNotificationAsRead(id),
                 this, new ItemConverter<Notification>());
     }
 
+    /**
+     * mark a notification as read async
+     * @param id Notification id, {@link Result#id}
+     * @param callback Callback
+     * @return Call
+     */
     public Call markNotificationAsRead (int id, Callback<Notification> callback) {
         return OkHttpUtils.enqueue(apiInterface.markNotificationAsRead(id),
                 this, new ItemConverter<Notification>(), callback);
     }
 
-    public Result<LoginResponse> login (LoginRequest request) throws FlarumException, JSONException {
+    /**
+     * Login to forum
+     * NOTICE: SDK will NOT save these info, please use {@link Flarum#setToken(String)} or {@link Flarum#setToken(TokenGetter)}
+     * pass it to sdk.
+     * @param request Login request, username and password
+     * @return Login response: token and uid
+     */
+    public Result<LoginResponse> login (LoginRequest request) throws FlarumException {
         Call call = apiInterface.login(request.getIdentification(),
                 request.getPassword());
         return OkHttpUtils.execute(call, this, new LoginResponseConverter());
     }
 
+    /**
+     * Login to forum async
+     * NOTICE: SDK will NOT save these info, please use {@link Flarum#setToken(String)} or {@link Flarum#setToken(TokenGetter)}
+     * pass it to sdk.
+     * @param request Login request, username and password
+     * @param callback Callback
+     * @return Call
+     */
     public Call login (LoginRequest request, final Callback<LoginResponse> callback) {
         return OkHttpUtils.enqueue(apiInterface.login(request.getIdentification(), request.getPassword()),
                 this, new LoginResponseConverter(), callback);
     }
 
+    /**
+     * Get forum tags async
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
     public Call getTags (int page, Callback<List<Tag>> callback) {
         return OkHttpUtils.enqueue(apiInterface.tags(page), this,
                 new ListConverter<Tag>(), callback);
     }
 
+    /**
+     * Get forum tags
+     * @param page page
+     * @return Tags list result
+     */
     public Result<List<Tag>> getTags (int page) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.tags(page), this,
                 new ListConverter<Tag>());
     }
 
+    /**
+     * Get user groups async
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
     public Call getGroups (int page, Callback<List<Group>> callback) {
         return OkHttpUtils.enqueue(apiInterface.groups(page), this,
                 new ListConverter<Group>(), callback);
     }
 
+    /**
+     * Get user groups
+     * @param page page
+     * @return user groups list result
+     */
     public Result<List<Group>> getGroups (int page) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.groups(page), this,
                 new ListConverter<Group>());
     }
 
+    /**
+     * Get all users, may requires admin permission
+     * @param page page
+     * @return User list result
+     */
     public Result<List<User>> getUsers (int page) throws FlarumException {
-        return OkHttpUtils.execute(apiInterface.users(page, null), this,
-                new ListConverter<User>());
+        return getUsers(null, page);
     }
 
+    /**
+     * Get all users async, may requires admin permission
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
     public Call getUsers (int page, Callback<List<User>> callback) {
-        return OkHttpUtils.enqueue(apiInterface.users(page, null), this,
-                new ListConverter<User>(), callback);
+        return getUsers(null, page, callback);
     }
 
+    /**
+     * Query users by username/gambits, may requires admin permission
+     * @param query filter by username/gambits
+     * @param page page
+     * @return User list result
+     */
     public Result<List<User>> getUsers (String query, int page) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.users(page, query), this,
                 new ListConverter<User>());
     }
 
+    /**
+     * Query users by username/gambits async, may requires admin permission
+     * @param query filter by username/gambits
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
     public Call getUsers (String query, int page, Callback<List<User>> callback) {
         return OkHttpUtils.enqueue(apiInterface.users(page, query), this,
                 new ListConverter<User>(), callback);
     }
 
+    /**
+     * Register a new user
+     * @param username Username
+     * @param password Password
+     * @param email Email
+     * @return User object after register
+     */
     public Result<User> registerUser (String username, String password, String email) throws FlarumException {
         return OkHttpUtils.execute(apiInterface.registerUser(username, password, email), this,
                 new ItemConverter<User>());
     }
 
+    /**
+     * Register a new user async
+     * @param username Username
+     * @param password Password
+     * @param email Email
+     * @param callback Callback
+     * @return Call
+     */
     public Call registerUser (String username, String password, String email, Callback<User> callback) {
         return OkHttpUtils.enqueue(apiInterface.registerUser(username, password, email),
         this, new ItemConverter<User>(), callback);
     }
 
+    /**
+     * Delete a user, may requires admin permission
+     * @param uid User id, {@link Result#id}
+     */
     public void deleteUser (int uid) throws FlarumException {
         OkHttpUtils.execute(apiInterface.deleteUser(uid), this,
                 null);
     }
 
+    /**
+     * Delete a user async, may requires admin permission
+     * @param uid User id, {@link Result#id}
+     * @param callback Callback
+     * @return Call
+     */
     public Call deleteUser (int uid, Callback callback) {
         return OkHttpUtils.enqueue(apiInterface.deleteUser(uid),
                 this, null, callback);
