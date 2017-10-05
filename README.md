@@ -240,7 +240,11 @@ id: 通知 Id，可以从 `getMessageList` 获取。
 
 ## 添加标签
 
-TODO
+`addTag(String name, String slug)`
+
+参数：名称、内链
+
+返回 `Tag`：添加成功后的 Tag 对象
 
 ## 更新标签
 

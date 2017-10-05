@@ -206,6 +206,28 @@ public class Flarum {
     }
 
     /**
+     * Add a new tag, may requires admin permission
+     * @param name tag name
+     * @param slug tag slug
+     * @return Tag object if operation successfully executed
+     */
+    public Result<Tag> addTag (String name, String slug) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.addTag(name, slug), this,
+                new ItemConverter<Tag>());
+    }
+
+    /**
+     * Add a new tag, may requires admin permission
+     * @param name tag name
+     * @param slug tag slug
+     * @return Call
+     */
+    public Call addTag (String name, String slug, Callback<Tag> callback) {
+        return OkHttpUtils.enqueue(apiInterface.addTag(name, slug), this,
+                new ItemConverter<Tag>(), callback);
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
@@ -294,6 +316,15 @@ public class Flarum {
         Call deleteUser (int uid) {
             return client.newCall(baseBuilder("users/" + uid, "DELETE",
                     createStringBody(""), null, 0).build());
+        }
+
+        Call addTag (String name, String slug) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", name);
+            jsonObject.put("slug", slug);
+            return client.newCall(baseBuilder("tags", "POST",
+                    createJsonBody(createRequestJson(jsonObject).toString())
+                    , null, 0).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
