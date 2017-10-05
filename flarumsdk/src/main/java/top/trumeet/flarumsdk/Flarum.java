@@ -248,6 +248,48 @@ public class Flarum {
     }
 
     /**
+     * Get discussion list
+     * @param page page
+     * @return Discussion list result
+     */
+    public Result<List<Discussion>> getDiscussionList (int page) throws FlarumException {
+        return getDiscussionList(null, page);
+    }
+
+    /**
+     * Get discussion list async
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
+    public Call getDiscussionList (int page, Callback<List<Discussion>> callback) {
+        return getDiscussionList(null, page, callback);
+    }
+
+    /**
+     * Get discussion list, filter by username/gambits
+     * @param query filter by username/gambits
+     * @param page page
+     * @return Discussion list result
+     */
+    public Result<List<Discussion>> getDiscussionList (String query, int page) throws FlarumException {
+        return OkHttpUtils.execute(apiInterface.discussions(query, page), this,
+                new ListConverter<Discussion>());
+    }
+
+    /**
+     * Get discussion list async, filter by username/gambits
+     * @param query filter by username/gambits
+     * @param page page
+     * @param callback Callback
+     * @return Call
+     */
+    public Call getDiscussionList (String query, int page, Callback<List<Discussion>> callback) {
+        return OkHttpUtils.enqueue(apiInterface.discussions(query, page), this,
+                new ListConverter<Discussion>(), callback);
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
@@ -350,6 +392,12 @@ public class Flarum {
         Call deleteTag (int id) {
             return client.newCall(baseBuilder("tags/" + id, "DELETE",
                     createStringBody(""), null, 0).build());
+        }
+
+        Call discussions (@Nullable String query, int id) {
+            return client.newCall(baseBuilder("discussions", "GET",
+                    null, query != null ? new Query("q", query) :
+                            null, id).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,
