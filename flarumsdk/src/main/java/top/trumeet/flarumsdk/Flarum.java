@@ -217,7 +217,7 @@ public class Flarum {
     }
 
     /**
-     * Add a new tag, may requires admin permission
+     * Add a new tag async, may requires admin permission
      * @param name tag name
      * @param slug tag slug
      * @return Call
@@ -225,6 +225,26 @@ public class Flarum {
     public Call addTag (String name, String slug, Callback<Tag> callback) {
         return OkHttpUtils.enqueue(apiInterface.addTag(name, slug), this,
                 new ItemConverter<Tag>(), callback);
+    }
+
+    /**
+     * Delete a tag, may requires admin permission
+     * @param id Tag id, see {@link Result#id}
+     */
+    public void deleteTag (int id) throws FlarumException {
+        OkHttpUtils.execute(apiInterface.deleteTag(id), this,
+                null);
+    }
+
+    /**
+     * Delete a tag async, may requires admin permission
+     * @param id Tag id, see {@link Result#id}
+     * @param callback Callback
+     * @return Call
+     */
+    public Call deleteTag (int id, Callback callback) {
+        return OkHttpUtils.enqueue(apiInterface.deleteTag(id), this,
+                null, callback);
     }
 
     /**
@@ -325,6 +345,11 @@ public class Flarum {
             return client.newCall(baseBuilder("tags", "POST",
                     createJsonBody(createRequestJson(jsonObject).toString())
                     , null, 0).build());
+        }
+
+        Call deleteTag (int id) {
+            return client.newCall(baseBuilder("tags/" + id, "DELETE",
+                    createStringBody(""), null, 0).build());
         }
 
         private Request.Builder baseBuilder (@Nonnull String urlPoint, @Nonnull String method,

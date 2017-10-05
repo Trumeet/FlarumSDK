@@ -9,6 +9,12 @@ import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 
 public class Result<T> {
     /**
+     * Id, TODO
+     */
+    public final int id = 0;
+
+
+    /**
      * Raw response from OkHttp
      */
     public final Response rawResponse;

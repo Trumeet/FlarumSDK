@@ -252,7 +252,11 @@ TODO
 
 ## 删除标签
 
-TODO
+`deleteTag(int id)`
+
+参数：Tag的ID
+
+返回：无
 
 ## 排序标签
 
