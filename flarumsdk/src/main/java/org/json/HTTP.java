@@ -42,7 +42,7 @@ public class HTTP {
      * header or a response header. A request header will contain
      * <pre>{
      *    Method: "POST" (for example),
-     *    "Request-URI": "/" (for example),
+     *    "RequestBuilder-URI": "/" (for example),
      *    "HTTP-Version": "HTTP/1.1" (for example)
      * }</pre>
      * A response header will contain
@@ -86,10 +86,10 @@ public class HTTP {
 
         } else {
 
-// Request
+// RequestBuilder
 
             jo.put("Method", token);
-            jo.put("Request-URI", x.nextToken());
+            jo.put("RequestBuilder-URI", x.nextToken());
             jo.put("HTTP-Version", x.nextToken());
         }
 
@@ -109,7 +109,7 @@ public class HTTP {
      * Convert a JSONObject into an HTTP header. A request header must contain
      * <pre>{
      *    Method: "POST" (for example),
-     *    "Request-URI": "/" (for example),
+     *    "RequestBuilder-URI": "/" (for example),
      *    "HTTP-Version": "HTTP/1.1" (for example)
      * }</pre>
      * A response header must contain
@@ -133,11 +133,11 @@ public class HTTP {
             sb.append(jo.getString("Status-Code"));
             sb.append(' ');
             sb.append(jo.getString("Reason-Phrase"));
-        } else if (jo.has("Method") && jo.has("Request-URI")) {
+        } else if (jo.has("Method") && jo.has("RequestBuilder-URI")) {
             sb.append(jo.getString("Method"));
             sb.append(' ');
             sb.append('"');
-            sb.append(jo.getString("Request-URI"));
+            sb.append(jo.getString("RequestBuilder-URI"));
             sb.append('"');
             sb.append(' ');
             sb.append(jo.getString("HTTP-Version"));
@@ -149,7 +149,7 @@ public class HTTP {
         	final String key = entry.getKey();
             if (!"HTTP-Version".equals(key)      && !"Status-Code".equals(key) &&
                     !"Reason-Phrase".equals(key) && !"Method".equals(key) &&
-                    !"Request-URI".equals(key)   && !JSONObject.NULL.equals(entry.getValue())) {
+                    !"RequestBuilder-URI".equals(key)   && !JSONObject.NULL.equals(entry.getValue())) {
                 sb.append(key);
                 sb.append(": ");
                 sb.append(jo.optString(key));
