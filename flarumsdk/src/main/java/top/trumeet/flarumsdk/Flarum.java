@@ -325,6 +325,17 @@ public class Flarum {
     }
 
     /**
+     * Delete a user avatar
+     * Available filters: none
+     * Paging: not support
+     * @param uid User {@link Result#id}
+     */
+    public RequestBuilder<User> deleteUserAvatar (int uid) {
+        return new RequestBuilder<>(new RequestBuilder.BaseRequest<>("users/" + uid + "/avatar",
+                "DELETE", createStringBody(""), this, new ItemConverter<User>()));
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
