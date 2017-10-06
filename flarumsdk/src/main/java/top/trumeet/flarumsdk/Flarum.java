@@ -336,6 +336,17 @@ public class Flarum {
     }
 
     /**
+     * Delete a post (reply)
+     * Available filters: none
+     * Paging: not support
+     * @param id Post {@link Result#id}
+     */
+    public RequestBuilder deletePost (int id) {
+        return new RequestBuilder(new RequestBuilder.BaseRequest("posts/" + id, "DELETE",
+                createStringBody(""), this, null));
+    }
+
+    /**
      * A dynamic getter for token
      */
     public interface TokenGetter {
