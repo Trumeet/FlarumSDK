@@ -57,13 +57,13 @@ public class RequestBuilder<T> {
         return baseBuilder().build();
     }
 
-    public RequestBuilder addFilter (String key, String value) {
+    public RequestBuilder<T> addFilter (String key, String value) {
         if (queries == null) queries = new HashMap<>(1);
         queries.put(key, value) ;
         return this;
     }
 
-    public RequestBuilder removeFilter (String key) {
+    public RequestBuilder<T> removeFilter (String key) {
         if (queries == null) return this;
         queries.remove(key);
         if (queries.isEmpty()) queries = null;
@@ -75,7 +75,7 @@ public class RequestBuilder<T> {
         return queries.get(key);
     }
 
-    public RequestBuilder setPage (int page) {
+    public RequestBuilder<T> setPage (int page) {
         this.page = page;
         return this;
     }
