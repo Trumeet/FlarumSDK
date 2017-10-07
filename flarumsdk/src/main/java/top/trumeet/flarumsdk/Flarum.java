@@ -21,9 +21,9 @@ public class Flarum {
     public static final MediaType TEXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
 
 
-    private Flarum (Uri baseUrl, API apiInterface) {
+    private Flarum (Uri baseUrl, OkHttpClient client) {
         this.baseUrl = baseUrl;
-        this.apiInterface = apiInterface;
+        this.client = client;
         Executor executor = Platform.get().defaultCallbackExecutor();
         if (executor == null) {
             executor = new Executor() {
@@ -38,7 +38,7 @@ public class Flarum {
 
     /**
      * Create API client
-     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme, TODO
+     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme
      * @return Flarum API client
      */
     public static Flarum create (String baseUrl) {
@@ -47,7 +47,7 @@ public class Flarum {
 
     /**
      * Create API client with custom {@link OkHttpClient}
-     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme, TODO
+     * @param baseUrl Forum base url, e.g: discuss.flarum.org, NOT INCLUDING scheme
      * @param okHttpClient Custom http client
      * @return Flarum API client
      */
@@ -58,7 +58,7 @@ public class Flarum {
                     .scheme("http")
                     .build();
         }
-        Flarum flarum = new Flarum(base, new API(okHttpClient, baseUrl));
+        Flarum flarum = new Flarum(base, okHttpClient);
         flarum.converter = new JSONApiConverter(Forum.class
                 , Notification.class,
                 User.class,
@@ -77,7 +77,7 @@ public class Flarum {
     }
 
     Call makeCall (Request request) {
-        return apiInterface.client.newCall(request);
+        return client.newCall(request);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Flarum {
     }
 
     private final Uri baseUrl;
-    private final API apiInterface;
+    private final OkHttpClient client;
     private final Executor platformExecutor;
 
     private JSONApiConverter converter;
@@ -134,6 +134,8 @@ public class Flarum {
 
     /**
      * get information about the forum, including groups and tags
+     * Available filters: none
+     * Paging: not support
      * @return Forum info
      */
     public RequestBuilder<Forum> getForumInfo () {
@@ -154,6 +156,8 @@ public class Flarum {
 
     /**
      * mark a notification as read
+     * Available filters: none
+     * Paging: not support
      * @param id Notification id, {@link Result#id}
      * @return notification object
      */
@@ -166,6 +170,8 @@ public class Flarum {
      * Login to forum
      * NOTICE: SDK will NOT save these info, please use {@link Flarum#setToken(String)} or {@link Flarum#setToken(TokenGetter)}
      * pass it to sdk.
+     * Available filters: none
+     * Paging: not support
      * @param identification Username
      * @param password Password
      */
@@ -180,6 +186,8 @@ public class Flarum {
 
     /**
      * Get forum tags async
+     * Available filters: none
+     * Paging: support
      * @return Tag list
      */
     public RequestBuilder<List<Tag>> getTags () {
@@ -189,6 +197,8 @@ public class Flarum {
 
     /**
      * Get user groups
+     * Available filters: none
+     * Paging: support
      * @return user groups list result
      */
     public RequestBuilder<List<Group>> getGroups () {
@@ -200,6 +210,7 @@ public class Flarum {
      * Query users by username/gambits, may requires admin permission
      * Available filters:
      * q - filter by username/gambits
+     * Paging: not support
      * @return User list result
      */
     public RequestBuilder<List<User>> getUsers () {
@@ -209,6 +220,8 @@ public class Flarum {
 
     /**
      * Register a new user
+     * Available filters: none
+     * Paging: not support
      * @param username Username
      * @param password Password
      * @param email Email
@@ -226,6 +239,8 @@ public class Flarum {
 
     /**
      * Delete a user, may requires admin permission
+     * Available filters: none
+     * Paging: not support
      * @param uid User id, {@link Result#id}
      */
     public RequestBuilder deleteUser (int uid) {
@@ -235,6 +250,8 @@ public class Flarum {
 
     /**
      * Add a new tag, may requires admin permission
+     * Available filters: none
+     * Paging: not support
      * @param name tag name
      * @param slug tag slug
      * @return Tag object if operation successfully executed
@@ -250,6 +267,8 @@ public class Flarum {
 
     /**
      * Delete a tag, may requires admin permission
+     * Available filters: none
+     * Paging: not support
      * @param id Tag id, see {@link Result#id}
      */
     public RequestBuilder deleteTag (int id) {
@@ -300,6 +319,8 @@ public class Flarum {
 
     /**
      * Delete a discussion
+     * Available filters: none
+     * Paging: not support
      * @param id Discussion id, {@link Result#id}
      */
     public RequestBuilder deleteDiscussion (int id) {
@@ -309,6 +330,8 @@ public class Flarum {
 
     /**
      * Get a discussion by id
+     * Available filters: none
+     * Paging: not support
      * @param id Discussion id, {@link Result#id}
      */
     public RequestBuilder<Discussion> getDiscussionById (int id) {
@@ -363,19 +386,6 @@ public class Flarum {
          * @return Token
          */
         @Nullable String getToken ();
-    }
-
-    private static class API {
-
-        private final OkHttpClient client;
-        private final String baseUrl;
-
-        API(OkHttpClient client, String baseUrl) {
-            this.client = client;
-            this.baseUrl = baseUrl;
-        }
-
-
     }
 
     private static RequestBody createJsonBody (String json) {
