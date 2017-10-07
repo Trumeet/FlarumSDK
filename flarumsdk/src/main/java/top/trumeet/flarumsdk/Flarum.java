@@ -1,5 +1,6 @@
 package top.trumeet.flarumsdk;
 
+import android.net.Uri;
 import okhttp3.*;
 import org.json.JSONObject;
 import top.trumeet.flarumsdk.data.*;
@@ -20,7 +21,7 @@ public class Flarum {
     public static final MediaType TEXT_PLAIN = MediaType.parse("text/plain; charset=utf-8");
 
 
-    private Flarum (String baseUrl, API apiInterface) {
+    private Flarum (Uri baseUrl, API apiInterface) {
         this.baseUrl = baseUrl;
         this.apiInterface = apiInterface;
         Executor executor = Platform.get().defaultCallbackExecutor();
@@ -51,7 +52,13 @@ public class Flarum {
      * @return Flarum API client
      */
     public static Flarum create (String baseUrl, OkHttpClient okHttpClient) {
-        Flarum flarum = new Flarum(baseUrl, new API(okHttpClient, baseUrl));
+        Uri base = Uri.parse(baseUrl);
+        if (base.getScheme() == null) {
+            base = base.buildUpon()
+                    .scheme("http")
+                    .build();
+        }
+        Flarum flarum = new Flarum(base, new API(okHttpClient, baseUrl));
         flarum.converter = new JSONApiConverter(Forum.class
                 , Notification.class,
                 User.class,
@@ -95,7 +102,7 @@ public class Flarum {
         });
     }
 
-    private final String baseUrl;
+    private final Uri baseUrl;
     private final API apiInterface;
     private final Executor platformExecutor;
 
@@ -121,7 +128,7 @@ public class Flarum {
      * Get forum base url
      * @return base url
      */
-    public String getBaseUrl() {
+    public Uri getBaseUrl() {
         return baseUrl;
     }
 

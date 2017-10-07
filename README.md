@@ -32,7 +32,8 @@ dependencies {
 ```java
 Flarum.create(String baseUrl);
 ```
-创建 APIManager。`baseUrl` 是 **论坛地址**，我们会根据它访问 API，如 `discuss.flarum.org`。（不能带有 scheme，如 https://。默认使用 https。TODO）
+创建 APIManager。`baseUrl` 是 **论坛地址**，我们会根据它访问 API，如 `discuss.flarum.org`。
+您可以在 baseUrl 中加入自定义 scheme，如 `https://bbs.letitfly.me`。如果您没有传递 Scheme，我们将会使用 HTTP。
 
 ## RequestBuilder
 

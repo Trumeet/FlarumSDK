@@ -81,9 +81,7 @@ public class RequestBuilder<T> {
     }
 
     private okhttp3.Request.Builder baseBuilder () {
-        Uri.Builder uriBuilder = new Uri.Builder()
-                .scheme("https" /* TODO */)
-                .authority(flarum.getBaseUrl())
+        Uri.Builder uriBuilder = flarum.getBaseUrl().buildUpon()
                 .appendPath("api")
                 .appendPath(baseRequest.urlEndpoint);
         if (queries != null) {
