@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("tags")
-public class Tag extends Resource {
+public class Tag extends Data {
 	private Object backgroundUrl;
 	private String lastTime;
 	private Object backgroundMode;

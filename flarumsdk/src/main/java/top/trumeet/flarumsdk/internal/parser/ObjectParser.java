@@ -1,10 +1,11 @@
 package top.trumeet.flarumsdk.internal.parser;
 
+import top.trumeet.flarumsdk.Flarum;
+import top.trumeet.flarumsdk.data.Data;
+import top.trumeet.flarumsdk.data.JSONApiObject;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
 
 /**
  * Created by Trumeet on 2017/9/26.
@@ -15,11 +16,11 @@ public class ObjectParser {
      * Convert {@link JSONApiObject} to T, like RxJava map()
      */
     public interface JsonObjectConverter<T> {
-        T convert (JSONApiObject object, String responseString);
+        T convert (JSONApiObject object, String responseString, Flarum apiManger);
     }
 
     @SuppressWarnings("unchecked")
-    public static  <T> T getFirst (List<Resource> data) {
+    public static  <T> T getFirst (List<Data> data) {
         if (data == null || data.size() <= 0)
             return null;
         Object object = data.get(0);
@@ -27,7 +28,7 @@ public class ObjectParser {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> List<T> getAll (List<Resource> data) {
+    public static <T> List<T> getAll (List<Data> data) {
         if (data == null || data.size() <= 0)
             return null;
         List<T> list = new ArrayList<>(data.size());

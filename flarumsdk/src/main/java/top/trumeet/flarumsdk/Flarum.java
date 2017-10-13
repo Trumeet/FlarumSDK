@@ -1,18 +1,25 @@
 package top.trumeet.flarumsdk;
 
 import android.net.Uri;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import okhttp3.*;
 import org.json.JSONObject;
 import top.trumeet.flarumsdk.data.*;
+import top.trumeet.flarumsdk.internal.parser.ContentParser;
 import top.trumeet.flarumsdk.internal.parser.converter.ItemConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.ListConverter;
 import top.trumeet.flarumsdk.internal.parser.converter.LoginResponseConverter;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.JSONApiConverter;
+import top.trumeet.flarumsdk.internal.parser.jsonapi.Parser;
 import top.trumeet.flarumsdk.internal.platform.Platform;
+import top.trumeet.flarumsdk.login.LoginRequest;
 import top.trumeet.flarumsdk.login.LoginResponse;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 @SuppressWarnings({"unused", "unchecked"})
@@ -34,6 +41,21 @@ public class Flarum {
             };
         }
         this.platformExecutor = executor;
+
+        Map<String, Class> mapping = new HashMap<>(1);
+        mapping.put("forums", Forum.class);
+        mapping.put("discussions", Discussion.class);
+        mapping.put("groups", Group.class);
+        mapping.put("tags", Tag.class);
+        mapping.put("links", Link.class);
+        mapping.put("notifications", Notification.class);
+        mapping.put("posts", Post.class);
+        mapping.put("users", User.class);
+
+        gson = new GsonBuilder()
+                .registerTypeAdapter(JSONApiObject.class, new Parser(mapping))
+                .registerTypeAdapter(Content.class, new ContentParser())
+                .create();
     }
 
     /**
@@ -59,14 +81,6 @@ public class Flarum {
                     .build();
         }
         Flarum flarum = new Flarum(base, okHttpClient);
-        flarum.converter = new JSONApiConverter(Forum.class
-                , Notification.class,
-                User.class,
-                Tag.class,
-                Link.class,
-                Discussion.class,
-                Group.class,
-                Post.class);
         return flarum;
     }
 
@@ -105,15 +119,23 @@ public class Flarum {
     private final Uri baseUrl;
     private final OkHttpClient client;
     private final Executor platformExecutor;
-
-    private JSONApiConverter converter;
+    private final Gson gson;
 
     /**
-     * Internal api, get json api converter, you can deserialize json to object use it
-     * @return Json api converter
+     * Internal api, deserialize json to object
+     * @return Parsed object
      */
-    public JSONApiConverter getConverter() {
-        return converter;
+    public JSONApiObject convert (String rawJson) {
+        return gson.fromJson(rawJson, JSONApiObject.class);
+    }
+
+    /**
+     * Internal api, get {@link com.google.gson.Gson} client
+     * @return Gson
+     */
+    @Nonnull
+    public Gson getGson () {
+        return gson;
     }
 
     /**
@@ -176,11 +198,8 @@ public class Flarum {
      * @param password Password
      */
     public RequestBuilder<LoginResponse> login (String identification, String password) {
-        JSONObject object = new JSONObject();
-        object.put("identification", identification);
-        object.put("password", password);
         return new RequestBuilder<>(new RequestBuilder.BaseRequest<>("token", "POST",
-                createJsonBody(object.toString())
+                createJsonBody(gson.toJson(new LoginRequest(password, identification)))
                 , this, new LoginResponseConverter()));
     }
 

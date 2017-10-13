@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("link")
-public class Link extends Resource {
+public class Link extends Data {
 	private boolean isInternal;
 	private boolean isNewtab;
 	private int id;

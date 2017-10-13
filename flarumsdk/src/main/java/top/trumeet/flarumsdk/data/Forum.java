@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("forums")
-public class Forum extends Resource {
+public class Forum extends Data {
 
 	private String guidelinesUrl;
 

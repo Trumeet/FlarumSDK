@@ -1,9 +1,8 @@
 package top.trumeet.flarumsdk.internal.parser.converter;
 
-import org.json.JSONException;
-
+import top.trumeet.flarumsdk.Flarum;
+import top.trumeet.flarumsdk.data.JSONApiObject;
 import top.trumeet.flarumsdk.internal.parser.ObjectParser;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 import top.trumeet.flarumsdk.login.LoginResponse;
 
 /**
@@ -12,10 +11,11 @@ import top.trumeet.flarumsdk.login.LoginResponse;
 
 public class LoginResponseConverter implements ObjectParser.JsonObjectConverter<LoginResponse> {
     @Override
-    public LoginResponse convert(JSONApiObject object, String responseString) {
+    public LoginResponse convert(JSONApiObject object, String responseString, Flarum apiManager) {
         try {
-            return LoginResponse.createFromJson(responseString);
-        } catch (JSONException e) {
+            return apiManager.getGson()
+                    .fromJson(responseString, LoginResponse.class);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

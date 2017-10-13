@@ -1,4 +1,4 @@
-package top.trumeet.flarumsdk.internal.parser.jsonapi.Models;
+package top.trumeet.flarumsdk.data;
 
 public class Links {
     private String self;
@@ -54,5 +54,17 @@ public class Links {
 
     public void setRelated(String related) {
         this.related = related;
+    }
+
+    @Override
+    public String toString() {
+        return "Links{" +
+                "self='" + self + '\'' +
+                ", first='" + first + '\'' +
+                ", prev='" + prev + '\'' +
+                ", next='" + next + '\'' +
+                ", last='" + last + '\'' +
+                ", related='" + related + '\'' +
+                '}';
     }
 }

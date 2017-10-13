@@ -22,7 +22,7 @@ dependencies {
     compileOnly 'com.google.android:android:2.1_r1'
     // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
-
+    compile 'com.google.code.gson:gson:2.8.2'
     // Failed on my computer, why??
     //implementation 'org.json:json:20170516'
 }

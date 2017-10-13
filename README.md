@@ -73,12 +73,12 @@ Result 是所有返回结果的包裹类，它包含如下信息：
 
 ## JSONApiObject
 这是反序列化后的 Json Api 对象：
-* data：所有数据，**主 attributes**、**include**、**relationship** 都在里面。您需要将 `Resource` 转换为自己需要的类型。
-* links：（可选的）links 对象，如 上一页下一页 链接
-* errors 和 hasErrors：错误信息
+* data：数据，对应 Json 的 Primary data，由于可能是数组或单个对象，这里都保存为 List。您需要将 `Resource` 转换为自己需要的类型。
+* links：链接，对应 Json 的 [链接](http://jsonapi.org.cn/format/#document-structure-links)。
+* errors：错误，对应 Json 的 [错误对象](http://jsonapi.org.cn/format/#errors-error-objects) 列表。
 
-## Resource
-每一个 Resource 对应一个 `data` 对象。它是所有 Model 的超类。它同时包含 `id`、`type` 等信息。
+## Data
+每一个 Data 对应一个 `data` 对象。它是所有 Model 的超类。它同时包含 `id`、`type`、`relationships`、`includes` 等信息。
 您需要将它转换为自己需要的类型。
 
 -----
@@ -91,7 +91,7 @@ Result 是所有返回结果的包裹类，它包含如下信息：
 
 # Dependencies
 
-* [JSONApi](https://github.com/faogustavo/JSONApi)
+* [Gson](https://github.com/google/gson/)
 * [OkHttp](http://square.github.io/okhttp/)
 
 # Licenses

@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("discussions")
-public class Discussion extends Resource {
+public class Discussion extends Data {
 	private String lastTime;
 	private int participantsCount;
 	private int lastPostNumber;

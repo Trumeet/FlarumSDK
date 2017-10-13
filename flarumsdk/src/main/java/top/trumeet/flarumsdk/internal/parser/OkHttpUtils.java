@@ -6,7 +6,7 @@ import top.trumeet.flarumsdk.Callback;
 import top.trumeet.flarumsdk.Flarum;
 import top.trumeet.flarumsdk.FlarumException;
 import top.trumeet.flarumsdk.Result;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
+import top.trumeet.flarumsdk.data.JSONApiObject;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public class OkHttpUtils {
             public void onResponse(final Call call, final Response response) {
                 try {
                     String resultStr = response.body().string();
-                    if (resultStr == null || resultStr.trim().equalsIgnoreCase("") &&
+                    if (response.code() == 402 && resultStr == null || resultStr.trim().equalsIgnoreCase("") &&
                             converter == null) {
                         apiManager.getPlatformExecutor()
                                 .execute(new Runnable() {
@@ -35,14 +35,14 @@ public class OkHttpUtils {
                                 });
                         return;
                     }
-                    final JSONApiObject object = apiManager.getConverter().fromJson(resultStr);
-                    if (object.hasErrors()) {
+                    final JSONApiObject object = apiManager.convert(resultStr);
+                    if (object != null && object.hasErrors()) {
                         // Handle error
                         callOnFailure(call, FlarumException.create(object.getErrors()));
                         return;
                     }
                     final Result<T> result = new Result<>(response, converter.convert(object,
-                            resultStr), object);
+                            resultStr, apiManager), object);
                     apiManager.getPlatformExecutor()
                             .execute(new Runnable() {
                                 @Override
@@ -77,15 +77,17 @@ public class OkHttpUtils {
         try {
             Response response = original.execute();
             String result = response.body().string();
-            if (result == null || result.trim().equalsIgnoreCase("") &&
+            if (response.code() == 402 &&
+                    result == null || result.trim().equalsIgnoreCase("") &&
                     converter == null) {
                 return null;
             }
-            JSONApiObject object = apiManager.getConverter().fromJson(result);
-            if (object.hasErrors()) {
+            JSONApiObject object = apiManager.convert(result);
+            if (object != null && object.hasErrors()) {
                 throw FlarumException.create(object.getErrors());
             }
-            return new Result<>(response, converter.convert(object, result), object);
+            return new Result<>(response, converter.convert(object, result, apiManager)
+                    , object);
         } catch (IOException e) {
             throw FlarumException.fromIOException(e);
         }

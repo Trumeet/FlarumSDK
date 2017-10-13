@@ -1,4 +1,4 @@
-package top.trumeet.flarumsdk.internal.parser.jsonapi.Models;
+package top.trumeet.flarumsdk.data;
 
 /**
  * Created by Gustavo Fão Valvassori on 21/04/2016.
@@ -23,5 +23,13 @@ public class ErrorSource {
 
     public void setParameter(String parameter) {
         this.parameter = parameter;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorSource{" +
+                "pointer='" + pointer + '\'' +
+                ", parameter='" + parameter + '\'' +
+                '}';
     }
 }

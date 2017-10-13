@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("groups")
-public class Group extends Resource {
+public class Group extends Data {
 	private String namePlural;
 	private String color;
 	private String icon;

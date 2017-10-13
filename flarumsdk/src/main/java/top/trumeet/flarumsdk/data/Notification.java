@@ -1,16 +1,9 @@
 package top.trumeet.flarumsdk.data;
 
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("notifications")
-public class Notification extends Resource {
+public class Notification extends Data {
 
 	private boolean isRead;
-
-	// TODO: Not work, always 0
-	private int id;
 
 	private String time;
 
@@ -36,14 +29,6 @@ public class Notification extends Resource {
 
 	public boolean isIsRead(){
 		return isRead;
-	}
-
-	public void setMsgId(int id){
-		this.id = id;
-	}
-
-	public int getMsgId(){
-		return id;
 	}
 
 	public void setTime(String time){
@@ -74,17 +59,13 @@ public class Notification extends Resource {
  	public String toString(){
 		return 
 			"Attributes{" + 
-			"isRead = '" + isRead + '\'' + 
-			",id = '" + id + '\'' +
+			"isRead = '" + isRead + '\'' +
 			",time = '" + time + '\'' + 
 			",contentType = '" + contentType + '\'' + 
 			",content = '" + content + '\'' +
 					",contentHtml = '" + contentHtml + '\'' +
 			"}";
 		}
-
-	public class Content {
-	}
 
 	public class PostMentionedContent extends Content {
  		private int replyNumber;

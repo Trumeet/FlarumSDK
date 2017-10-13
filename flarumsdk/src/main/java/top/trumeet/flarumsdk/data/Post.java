@@ -1,21 +1,16 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("posts")
-public class Post extends Resource {
+public class Post extends Data {
 	private boolean canFlag;
 	private boolean canLike;
 	private boolean canEdit;
 	private String ipAddress;
 	private String contentHtml;
 	// TODO: Multi type
-	private String content;
+	private Content content;
 	private int number;
 	private boolean canApprove;
 	private boolean canDelete;
-	private int id;
 	private String time;
 	private boolean isApproved;
 	private String contentType;
@@ -60,11 +55,11 @@ public class Post extends Resource {
 		return contentHtml;
 	}
 
-	public void setContent(String content){
+	public void setContent(Content content){
 		this.content = content;
 	}
 
-	public String getContent(){
+	public Content getContent(){
 		return content;
 	}
 
@@ -90,14 +85,6 @@ public class Post extends Resource {
 
 	public boolean isCanDelete(){
 		return canDelete;
-	}
-
-	public void getItemId(int id){
-		this.id = id;
-	}
-
-	public int getItemId(){
-		return id;
 	}
 
 	public void setTime(String time){
@@ -136,8 +123,7 @@ public class Post extends Resource {
 			",content = '" + content + '\'' + 
 			",number = '" + number + '\'' + 
 			",canApprove = '" + canApprove + '\'' + 
-			",canDelete = '" + canDelete + '\'' + 
-			",id = '" + id + '\'' + 
+			",canDelete = '" + canDelete + '\'' +
 			",time = '" + time + '\'' + 
 			",isApproved = '" + isApproved + '\'' + 
 			",contentType = '" + contentType + '\'' + 

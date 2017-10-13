@@ -1,10 +1,6 @@
 package top.trumeet.flarumsdk.data;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Annotations.Type;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.Resource;
-
-@Type("users")
-public class User extends Resource {
+public class User extends Data {
 	private String lastSeenTime;
 	private String avatarUrl;
 	private String joinTime;

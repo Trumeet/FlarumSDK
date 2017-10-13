@@ -1,11 +1,11 @@
-package top.trumeet.flarumsdk.internal.parser.jsonapi.Models;
+package top.trumeet.flarumsdk.data;
 
 /**
  * Created by Gustavo Fão Valvassori on 21/04/2016.
  * Propósito: ${CURSOR}
  */
-public class ErrorModel {
-
+public class Error {
+    private String id;
     private String status;
     private String title;
     private String detail;
@@ -52,10 +52,19 @@ public class ErrorModel {
         this.source = source;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
-        return "ErrorModel{" +
-                "status='" + status + '\'' +
+        return "Error{" +
+                "id='" + id + '\'' +
+                ", status='" + status + '\'' +
                 ", title='" + title + '\'' +
                 ", detail='" + detail + '\'' +
                 ", source=" + source +

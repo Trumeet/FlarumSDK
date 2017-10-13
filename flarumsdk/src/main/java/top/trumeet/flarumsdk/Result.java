@@ -1,7 +1,7 @@
 package top.trumeet.flarumsdk;
 
 import okhttp3.Response;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
+import top.trumeet.flarumsdk.data.JSONApiObject;
 
 /**
  * Created by Trumeet on 2017/9/26.
@@ -33,5 +33,15 @@ public class Result<T> {
         this.rawResponse = rawResponse;
         this.mainAttr = mainAttr;
         this.object = object;
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "id=" + id +
+                ", rawResponse=" + rawResponse +
+                ", mainAttr=" + mainAttr +
+                ", object=" + object +
+                '}';
     }
 }

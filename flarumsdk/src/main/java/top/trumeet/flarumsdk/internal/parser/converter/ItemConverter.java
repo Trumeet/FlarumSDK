@@ -1,7 +1,8 @@
 package top.trumeet.flarumsdk.internal.parser.converter;
 
+import top.trumeet.flarumsdk.Flarum;
+import top.trumeet.flarumsdk.data.JSONApiObject;
 import top.trumeet.flarumsdk.internal.parser.ObjectParser;
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 
 /**
  * Created by Trumeet on 2017/9/26.
@@ -9,7 +10,7 @@ import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.JSONApiObject;
 
 public class ItemConverter<T> implements ObjectParser.JsonObjectConverter<T> {
     @Override
-    public T convert (JSONApiObject object, String responseString) {
+    public T convert (JSONApiObject object, String responseString, Flarum apiManager) {
         return ObjectParser.getFirst(object.getData());
     }
 }

@@ -1,10 +1,13 @@
 package top.trumeet.flarumsdk.login;
 
 
-public class LoginRequest{
+import com.google.gson.annotations.SerializedName;
 
+public class LoginRequest{
+	@SerializedName("password")
 	private String password;
 
+	@SerializedName("identification")
 	private String identification;
 
 	public void setPassword(String password){

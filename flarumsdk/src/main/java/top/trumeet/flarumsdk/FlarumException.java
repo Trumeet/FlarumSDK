@@ -1,6 +1,6 @@
 package top.trumeet.flarumsdk;
 
-import top.trumeet.flarumsdk.internal.parser.jsonapi.Models.ErrorModel;
+import top.trumeet.flarumsdk.data.Error;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +28,7 @@ public class FlarumException extends Exception {
 
     private int status;
     private String code;
-    private List<ErrorModel> allErrors;
+    private List<Error> allErrors;
 
     public FlarumException (int status, String code) {
         super(status + ": " + code);
@@ -36,7 +36,7 @@ public class FlarumException extends Exception {
         this.code = code;
     }
 
-    public static FlarumException create (ErrorModel errorModel) {
+    public static FlarumException create (Error errorModel) {
         return new FlarumException(Integer.parseInt(errorModel.getStatus()),
                 errorModel.getCode());
     }
@@ -47,7 +47,7 @@ public class FlarumException extends Exception {
         return exception;
     }
 
-    public static FlarumException create (List<ErrorModel> errorModels) {
+    public static FlarumException create (List<Error> errorModels) {
         if (errorModels == null || errorModels.size() <= 0) {
             return new FlarumException();
         }
@@ -56,11 +56,11 @@ public class FlarumException extends Exception {
         return exception;
     }
 
-    public List<ErrorModel> getAllErrors() {
+    public List<Error> getAllErrors() {
         return allErrors;
     }
 
-    public void setAllErrors(List<ErrorModel> allErrors) {
+    public void setAllErrors(List<Error> allErrors) {
         this.allErrors = allErrors;
     }
 
