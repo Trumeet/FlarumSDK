@@ -8,6 +8,15 @@ public class JSONApiObject {
     private List<Data> data;
     private Links links;
     private List<Error> errors;
+    private List<Data> included;
+
+    public List<Data> getIncluded() {
+        return included;
+    }
+
+    public void setIncluded(List<Data> included) {
+        this.included = included;
+    }
 
     public JSONApiObject() {
         data = new ArrayList<>();

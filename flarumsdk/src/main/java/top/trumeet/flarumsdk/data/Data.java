@@ -12,7 +12,6 @@ public class Data {
 
     private Map<String, List<Data>>
             relationships;
-    private List<Data> included;
 
     public String getType() {
         return type;
@@ -36,13 +35,5 @@ public class Data {
 
     public void setRelationships(Map<String, List<Data>> relationships) {
         this.relationships = relationships;
-    }
-
-    public List<Data> getIncluded() {
-        return included;
-    }
-
-    public void setIncluded(List<Data> included) {
-        this.included = included;
     }
 }

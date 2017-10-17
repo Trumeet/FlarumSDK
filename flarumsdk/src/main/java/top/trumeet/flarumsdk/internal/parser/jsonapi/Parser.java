@@ -46,6 +46,13 @@ public class Parser implements JsonDeserializer<JSONApiObject> {
             object.setLinks(parseLinks(links, jsonDeserializationContext));
         }
 
+        // Parse includes
+        JsonElement included = rootObject.get("included");
+        if (included != null && included.isJsonArray()) {
+            object.setIncluded(parseData(included.getAsJsonArray()
+                    , jsonDeserializationContext));
+        }
+
         object.setData(parseData(data, jsonDeserializationContext));
 
         return object;
@@ -171,11 +178,6 @@ public class Parser implements JsonDeserializer<JSONApiObject> {
         // Parse relationships
         if (element.has("relationships")) {
             data.setRelationships(parseRelationships(element, context));
-        }
-
-        // Parse includes
-        if (element.has("includes")) {
-            data.setIncluded(parseData(element, context));
         }
 
         return data;
