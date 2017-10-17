@@ -139,6 +139,14 @@ public class Flarum {
     }
 
     /**
+     * Internal api, get {@link OkHttpClient} when create
+     * @return client
+     */
+    public OkHttpClient getClient () {
+        return client;
+    }
+
+    /**
      * Internal api, get platform executor. In android, it will execute on main thread
      * @return executor
      */

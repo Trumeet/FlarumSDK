@@ -25,6 +25,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     // Failed on my computer, why??
     //implementation 'org.json:json:20170516'
+    testCompile 'junit:junit:4.12'
 }
 
 sourceCompatibility = "1.7"
