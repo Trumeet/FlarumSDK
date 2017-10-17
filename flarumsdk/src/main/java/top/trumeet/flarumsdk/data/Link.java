@@ -3,7 +3,6 @@ package top.trumeet.flarumsdk.data;
 public class Link extends Data {
 	private boolean isInternal;
 	private boolean isNewtab;
-	private int id;
 	private int position;
 	private String title;
 	private String url;
@@ -22,14 +21,6 @@ public class Link extends Data {
 
 	public boolean isIsNewtab(){
 		return isNewtab;
-	}
-
-	public void setLinkId(int id){
-		this.id = id;
-	}
-
-	public int getLinkId(){
-		return id;
 	}
 
 	public void setPosition(int position){
@@ -61,8 +52,7 @@ public class Link extends Data {
 		return 
 			"Link{" + 
 			"isInternal = '" + isInternal + '\'' + 
-			",isNewtab = '" + isNewtab + '\'' + 
-			",id = '" + id + '\'' + 
+			",isNewtab = '" + isNewtab + '\'' +
 			",position = '" + position + '\'' + 
 			",title = '" + title + '\'' + 
 			",url = '" + url + '\'' + 
